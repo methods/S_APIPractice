@@ -7,6 +7,11 @@
   // The Universal image includes Java 17, Maven, and Node.js
   "image": "mcr.microsoft.com/devcontainers/universal:2",
 
+  // This installs the postgres-client tool during the build phase, not start-up.
+  "features": {
+    "ghcr.io/devcontainers/features/postgres-client:1": {}
+  },
+
   "customizations": {
     "vscode": {
       "extensions": [
@@ -32,9 +37,11 @@
   },
 
   // AUTOMATION
-  // 1. Install Postgres CLI (for external DB)
+  // 1. Check if Secret env varible exists 
   // 2. Setup .pgpass (for external DB)
   // 3. (Optional) Run 'mvn clean install' to pre-download dependencies so the user waits less?
   //    (Usually better to let the user run this manually, but you *could* add it here).
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y postgresql-client && echo \"*:*:*:*:$SUPABASE_DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass"
+  // This script only runs if your password secret is actually present.
+  "postCreateCommand": "if [ -n \"$SUPABASE_DB_PASSWORD\" ]; then echo \"*:*:*:*:$SUPABASE_DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass; else echo 'Warning: SUPABASE_DB_PASSWORD not set. .pgpass not created.'; fi"
+
 }
