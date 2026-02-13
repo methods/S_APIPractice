@@ -7,11 +7,6 @@
   // Use the specific Java image (Lighter/Faster than Universal)
   "image": "mcr.microsoft.com/devcontainers/java:1-17-bookworm",
 
-  "features": {
-    // Installs the PostgreSQL client tools (psql, pg_dump, etc.)
-    "ghcr.io/devcontainers-contrib/features/postgres-client:1": {}
-  },
-
   "customizations": {
     "vscode": {
       "extensions": [
@@ -40,11 +35,11 @@
     }
   },
 
-  // COMMANDS EXPLAINED:
-  // 1. Grant execute permissions to mvnw (common issue on Windows/Mac handovers)
-  // 2. Setup .pgpass for passwordless DB connection using the Github Secret
-  "postCreateCommand": "chmod +x mvnw && if [ -n \"$DB_PASSWORD\" ]; then echo \"*:*:*:*:$DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass; else echo 'Warning: DB_PASSWORD not set'; fi",
+  // UPDATED COMMAND:
+  // 1. sudo apt-get install: Installs postgres-client reliably from Debian repos.
+  // 2. chmod +x mvnw: Fixes permission issues.
+  // 3. .pgpass: Sets up database secrets.
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y postgresql-client && chmod +x mvnw && if [ -n \"$DB_PASSWORD\" ]; then echo \"*:*:*:*:$DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass; else echo 'Warning: DB_PASSWORD not set'; fi",
 
-  // Connect to the internal network if needed (usually defaults are fine)
   "remoteUser": "vscode"
 }
