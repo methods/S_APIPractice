@@ -7,10 +7,10 @@
   // The Universal image includes Java 17, Maven, and Node.js
   "image": "mcr.microsoft.com/devcontainers/universal:2",
 
-  // This installs the postgres-client tool during the build phase, not start-up.
-  "features": {
-    "ghcr.io/devcontainers/features/postgres-client:1": {}
-  },
+  // // This installs the postgres-client tool during the build phase, not start-up.
+  // "features": {
+  //   "ghcr.io/devcontainers/features/postgres-client:1": {}
+  // },
 
   "customizations": {
     "vscode": {
@@ -29,19 +29,17 @@
       "settings": {
         // Use the SDKMAN 'current' Java (currently Java 17 in the Universal image)
         "java.configuration.updateBuildConfiguration": "automatic",
-        "java.jdt.ls.java.home": "/usr/local/sdkman/candidates/java/current",
-        "spring.boot.ls.java.home": "/usr/local/sdkman/candidates/java/current",
+        "java.jdt.ls.java.home": "/usr/local/sdkman/candidates/java/17.0.15-ms",
+        "spring.boot.ls.java.home": "/usr/local/sdkman/candidates/java/17.0.15-ms",
         "pgsql.format.keywordCase": "upper"
       }
     }
   },
 
-  // AUTOMATION
-  // 1. Check if Secret env varible exists 
-  // 2. Setup .pgpass (for external DB)
-  // 3. (Optional) Run 'mvn clean install' to pre-download dependencies so the user waits less?
-  //    (Usually better to let the user run this manually, but you *could* add it here).
-  // This script only runs if your password secret is actually present.
-  "postCreateCommand": "if [ -n \"$SUPABASE_DB_PASSWORD\" ]; then echo \"*:*:*:*:$SUPABASE_DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass; else echo 'Warning: SUPABASE_DB_PASSWORD not set. .pgpass not created.'; fi"
-
+  // AUTOMATION EXPLAINED:
+  // 1. apt-get update: Refreshes package lists (non-interactive mode prevents hangs).
+  // 2. apt-get install: Gets the postgres client.
+  // 3. sdk default: Switches the TERMINAL Java version to 17.
+  // 4. Secret setup: Writes the password file if the secret exists.
+  "postCreateCommand": "sudo DEBIAN_FRONTEND=noninteractive apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql-client && source /usr/local/sdkman/bin/sdkman-init.sh && sdk default java 17.0.15-ms && if [ -n \"$DB_PASSWORD\" ]; then echo \"*:*:*:*:$DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass; else echo 'Warning: DB_PASSWORD not set'; fi"
 }
