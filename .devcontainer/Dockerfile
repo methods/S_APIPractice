@@ -1,4 +1,7 @@
 # 1. Start from the official Java 17 image (Fast & Cached)
+# NOTE: We intentionally use the floating "1-17-bookworm" tag here to keep the devcontainer
+# up to date with the latest 1.x Java 17 image on Bookworm. Reproducibility is less critical
+# for this development-only environment than receiving automatic security and tooling updates.
 FROM mcr.microsoft.com/devcontainers/java:1-17-bookworm
 
 # 2. Install Postgres Client & Git LFS (Build time)
