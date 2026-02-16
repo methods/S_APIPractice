@@ -35,10 +35,9 @@
     }
   },
 
-  // UPDATED COMMAND:
-  // 1. sudo apt-get install: Installs postgres-client reliably from Debian repos.
-  // 2. chmod +x mvnw: Fixes permission issues.
-  // 3. .pgpass: Sets up database secrets.
+  // postCreateCommand:
+  // 1. chmod +x mvnw: Ensures the Maven wrapper script is executable.
+  // 2. .pgpass setup: Writes the DB password from $DB_PASSWORD into ~/.pgpass for Postgres CLI auth.
   "postCreateCommand": "chmod +x mvnw && if [ -n \"$DB_USERNAME\" ] && [ -n \"$DB_PASSWORD\" ]; then echo \"*:*:*:$DB_USERNAME:$DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass; else echo 'Warning: DB_USERNAME or DB_PASSWORD not set'; fi",
   "remoteUser": "vscode"
 
