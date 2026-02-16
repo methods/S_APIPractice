@@ -1,0 +1,50 @@
+// This devcontainer assumes an external Postgres database
+// (e.g. Supabase, RDS, or locally hosted), not a containerized DB.
+// Connection auth is handled via the Postgres CLI and ~/.pgpass.
+// NOTE: This container is optimized for GitHub Codespaces where Secrets
+  // (DB_URL, DB_PASSWORD) are injected automatically.
+  //
+  // If running locally, you must provide these variables via a local .env file
+  // or your shell environment, though local corporate firewalls may still
+  // block the connection to Supabase.
+
+{
+  "name": "HearingsDemo Env",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // 1. Core Java & Spring Pack (Includes Maven, Gradle, Debugger, Test Runner)
+        "vscjava.vscode-java-pack",
+        
+        // 2. Spring Boot Extension Pack (Includes Dashboard, Initializr, Tools)
+        "vmware.vscode-boot-dev-pack",
+
+        // 3. Database Management
+        "ckolkman.vscode-postgres",
+
+        // 4. Utility
+        "redhat.vscode-xml"
+
+      ],
+      "settings": {
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "pgsql.format.keywordCase": "upper",
+        // Ensures the test runner finds your new integration tests
+        "java.test.config": {
+            "name": "HearingsDemoTests",
+            "workingDirectory": "${workspaceFolder}"
+        }
+      }
+    }
+  },
+
+  // postCreateCommand:
+  // 1. chmod +x mvnw: Ensures the Maven wrapper script is executable.
+  // 2. .pgpass setup: Writes the DB password from $DB_PASSWORD into ~/.pgpass for Postgres CLI auth.
+  "postCreateCommand": "chmod +x mvnw && if [ -n \"$DB_USERNAME\" ] && [ -n \"$DB_PASSWORD\" ]; then printf '%s\\n' \"*:*:*:$DB_USERNAME:$DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass; else echo 'Warning: DB_USERNAME or DB_PASSWORD not set'; fi",
+  "remoteUser": "vscode"
+
+}
