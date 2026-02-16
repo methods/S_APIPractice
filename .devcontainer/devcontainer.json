@@ -1,6 +1,12 @@
 // This devcontainer assumes an external Postgres database
 // (e.g. Supabase, RDS, or locally hosted), not a containerized DB.
 // Connection auth is handled via the Postgres CLI and ~/.pgpass.
+// NOTE: This container is optimized for GitHub Codespaces where Secrets
+  // (DB_URL, DB_PASSWORD) are injected automatically.
+  //
+  // If running locally, you must provide these variables via a local .env file
+  // or your shell environment, though local corporate firewalls may still
+  // block the connection to Supabase.
 
 {
   "name": "HearingsDemo Env",
