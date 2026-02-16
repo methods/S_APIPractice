@@ -3,10 +3,10 @@
 // Connection auth is handled via the Postgres CLI and ~/.pgpass.
 
 {
-  "name": "HearingsDemo Env (Java 17 & Postgres)",
-  // Use the specific Java image (Lighter/Faster than Universal)
-  "image": "mcr.microsoft.com/devcontainers/java:1-17-bookworm",
-
+  "name": "HearingsDemo Env",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -17,7 +17,7 @@
         "vmware.vscode-boot-dev-pack",
 
         // 3. Database Management
-        "ms-ossdata.vscode-postgresql",
+        "ckolkman.vscode-postgres",
 
         // 4. Utility
         "redhat.vscode-xml"
@@ -39,7 +39,7 @@
   // 1. sudo apt-get install: Installs postgres-client reliably from Debian repos.
   // 2. chmod +x mvnw: Fixes permission issues.
   // 3. .pgpass: Sets up database secrets.
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y postgresql-client && chmod +x mvnw && if [ -n \"$DB_PASSWORD\" ]; then echo \"*:*:*:*:$DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass; else echo 'Warning: DB_PASSWORD not set'; fi",
-
+  "postCreateCommand": "chmod +x mvnw && if [ -n \"$DB_PASSWORD\" ]; then echo \"*:*:*:*:$DB_PASSWORD\" > ~/.pgpass && chmod 0600 ~/.pgpass; else echo 'Warning: DB_PASSWORD not set'; fi",
   "remoteUser": "vscode"
+
 }
