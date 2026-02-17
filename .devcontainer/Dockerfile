@@ -13,3 +13,15 @@ RUN rm -f /etc/apt/sources.list.d/yarn.list \
         git-lfs \
     && git lfs install \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+
+# 3. Create the folder where Postgres looks for certificates
+RUN mkdir -p /home/vscode/.postgresql
+
+# 4. Copy the Supabase Root CA certificate
+COPY supabase-ca.crt /home/vscode/.postgresql/root.crt
+
+# 5. Ensure the 'vscode' user owns this folder so the app can read it
+RUN chown -R vscode:vscode /home/vscode/.postgresql && \
+    chmod 700 /home/vscode/.postgresql && \
+    chmod 600 /home/vscode/.postgresql/root.crt
