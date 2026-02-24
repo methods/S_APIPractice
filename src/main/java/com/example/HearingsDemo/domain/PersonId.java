@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.UUID;
 
-// blureprint for PersonId Composite Key
+// blueprint for PersonId Composite Key
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

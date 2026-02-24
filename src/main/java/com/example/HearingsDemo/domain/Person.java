@@ -10,10 +10,11 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "person", schema = "public") // <-- table called public, schema is "public"
+@Table(name = "person", schema = "public")
 @IdClass(PersonId.class) // <--- referencing Composite Key
-@Getter // Replaces @Data
-@Setter // replaces @Data - stops us suing AllArgsConstructor (?)
+// Using @Getter/@Setter instead of @Data so Lombok does not generate an all-args constructor; JPA entities rely on a no-args constructor.
+@Getter 
+@Setter 
 @NoArgsConstructor
 public class Person {
 
@@ -65,7 +66,7 @@ public class Person {
         if (o == null || getClass() != o.getClass()) return false; 
 
         // Step 3: Casting aka the "translation"
-        // Cast 'o' from a genric Object to object/class 'Person'
+        // Cast 'o' from a generic Object to object/class 'Person'
         // This allows us to access the private fields (.id, .hearingId)
         Person person = (Person) o;
 
