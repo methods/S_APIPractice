@@ -20,38 +20,39 @@ class PersonRepositoryTest {
     @Autowired
     private PersonRepository personRepository;
 
+    // --- Helper Method to create a dummy person 
+    private Person createPerson(UUID pID, UUID hID, String firstName) {
+        Person p = new Person();
+        p.setId(pID);
+        p.setHearingId(hID);
+        p.setFirstName(firstName);
+        p.setLastName("TestUser");
+        p.setDateOfBirth(LocalDateTime.now());
+        return p; 
+    }
+
     @Test
     void shouldSaveAndRetrievePersonWithCompositeKey() {
-        // 1. Arrange (Create the Data)
+        // 1.1. Arrange (Create unique ids)
         UUID personId = UUID.randomUUID();
         UUID hearingId = UUID.randomUUID();
-
-        // Create the Entity
-        Person person = new Person();
-        person.setId(personId);
-        person.setHearingId(hearingId);
-        person.setFirstName("TDD");
-        person.setLastName("User");
-        person.setDateOfBirth(LocalDateTime.of(2026, 2, 23, 12, 0));
-        person.setAddress1("123");
-        person.setAddress2("Fake Street");
-        person.setAddress3("Bulming");
-        person.setAddress4("Wyoming");
-        person.setPostCode("FH5 JHY");
+        
+        // 1.2. Create the Entity
+        Person person = createPerson(personId, hearingId, "Original");
 
         // 2. Act (Try to save it)
         personRepository.save(person);
 
-        // 3. Assert (Check if it worked)
+        // 3. Assert
+        // Step A: Prepare the tool to find the data
         PersonId compositeKey = new PersonId(personId, hearingId);
-        
-        // Try to find it
+        // Step 2: Use the tool
         Optional<Person> foundPerson = personRepository.findById(compositeKey);
 
         // Assertions (AssertJ library)
         assertThat(foundPerson).isPresent();
-        assertThat(foundPerson.get().getFirstName()).isEqualTo("TDD");
-        assertThat(foundPerson.get().getAddress1()).isEqualTo("123");
+        assertThat(foundPerson.get().getFirstName()).isEqualTo("Original");
         assertThat(foundPerson.get().getId()).isEqualTo(personId);
+        assertThat(foundPerson.get().getHearingId()).isEqualTo(hearingId);
     }
 }
