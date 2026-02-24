@@ -57,4 +57,29 @@ class PersonRepositoryTest {
         assertThat(foundPerson.get().getId()).isEqualTo(personId);
         assertThat(foundPerson.get().getHearingId()).isEqualTo(hearingId);
     }
+
+    @Test
+    void shouldUpdateExistingPersonWhenIdMatches() {
+        // 1. Arrange
+        UUID id = UUID.randomUUID();
+        UUID hearingId = UUID.randomUUID();
+        Person original = createPerson(id, hearingId, "OriginalName");
+        // Save to repository
+        personRepository.save(original);
+
+        // 2. Act (Save a NEW object wiht the SAME key)
+        Person updated = createPerson(id, hearingId, "NewPerson");
+        // Check state can also be changed correctly
+        updated.setAddress1("New Address");
+        personRepository.save(updated);
+
+        // 3. Assert
+        long count = personRepository.count();
+        assertThat(count).isEqualTo(1);
+
+        // 4. Verify the data 
+        Person retrieved = personRepository.findById(new PersonId(id, hearingId)).get();
+        assertThat(retrieved.getFirstName()).isEqualTo("NewPerson");
+        assertThat(retrieved.getAddress1()).isEqualTo("New Address");
+    }
 }
