@@ -6,7 +6,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.lang.NonNull;
 
+import java.beans.Transient;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -82,4 +84,44 @@ class PersonRepositoryTest {
         assertThat(retrieved.getFirstName()).isEqualTo("NewPerson");
         assertThat(retrieved.getAddress1()).isEqualTo("New Address");
     }
+
+    @Test
+    void shouldFindPeopleByPartialKey() {
+        // 1. Arrange: Create 3 people
+        // Two are in Hearing A. One in Hearing B
+        UUID hearingA = UUID.randomUUID();
+        UUID hearingB = UUID.randomUUID();
+        personRepository.save(createPerson(UUID.randomUUID(), hearingA, "firstPerson"));
+        personRepository.save(createPerson(UUID.randomUUID(), hearingA, "secondPerson"));
+        personRepository.save(createPerson(UUID.randomUUID(), hearingB, "thirdPerson"));
+
+        // 2. Act: Search by Hearing ID (Partial Key)
+        List<Person> peopleInHearingA = personRepository.findByHearingId(hearingA);
+
+        // 3. Assert
+        assertThat(peopleInHearingA).hasSize(2);
+    }
+
+    @Test
+    void shouldFindPersonHistoryAcrossHearings() {
+        // 1. Arrange: Create ONE person
+        UUID samePersonId = UUID.randomUUID();
+
+        // Create two difffernt hearings
+        UUID hearingA = UUID.randomUUID();
+        UUID hearingB = UUID.randomUUID();
+
+        // add same person to multiple hearings
+        personRepository.save(createPerson(samePersonId, hearingA, "SamePerson"));
+        personRepository.save(createPerson(samePersonId, hearingB, "SamePerson"));
+
+        // Act: Try to find them just by using the person's UUID ID
+        List<Person> history = personRepository.findById(samePersonId);
+
+        // Assert
+        assertThat(history).hasSize(2);
+
+    }
+
+
 }
