@@ -1,12 +1,10 @@
 package com.example.HearingsDemo.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
-import java.lang.annotation.Inherited;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -19,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Person {
 
-    // --- Keys ----
+    // --- Composite Key Fields ----
     @Id
     @Column(name = "id", nullable = false)
     private UUID id;
@@ -81,7 +79,7 @@ public class Person {
     @Override
     public int hashCode() {
         // THE Equals and HashCode Contract:
-        // We hash ONLY the fields used in eauls() to keep them in sync
+        // We hash ONLY the fields used in equals() to keep them in sync
         return Objects.hash(id, hearingId);
     }
 
