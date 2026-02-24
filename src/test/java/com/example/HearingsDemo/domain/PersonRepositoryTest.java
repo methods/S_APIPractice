@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -21,6 +22,7 @@ class PersonRepositoryTest {
     private PersonRepository personRepository;
 
     // --- Helper Method to create a dummy person 
+    @NonNull
     private Person createPerson(UUID pID, UUID hID, String firstName) {
         Person p = new Person();
         p.setId(pID);
@@ -41,7 +43,7 @@ class PersonRepositoryTest {
         Person person = createPerson(personId, hearingId, "Original");
 
         // 2. Act (Try to save it)
-        personRepository.save(person);
+        personRepository.save(person); //Null type safety: The expression of type 'Person' needs unchecked conversion to conform to '@NonNull Person'
 
         // 3. Assert
         // Step A: Prepare the tool to find the data
