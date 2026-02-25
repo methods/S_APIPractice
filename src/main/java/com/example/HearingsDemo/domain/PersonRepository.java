@@ -6,12 +6,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
-// 1. @Repository: Tells Spring "this bean talks to the DB"
-// 2. extends JpaRepository: inherits all methods from this class
-// 3. <Person, PersonId>: The Generics:
-//          - First: the Entity we are managing.
-//          - Second: the Data Type of the Primary Key 
-//          (Because we have a Composite Key, we MUST put 'PersonId' here, not 'UUID')
+// 1. @Repository: Marks this interface as a persistence componenet managed by Spring - Tells Spring "this bean talks to the DB"
+// 2. extends JpaRepository: inherits CRUD and query methods from this class (Spring Data JPA)
+// 3. <Person, PersonId>: Generic parameters:
+//      - Entity type
+//      - Primary key type (composite key via PersonId)
+//        (Because we have a Composite Key, we MUST put 'PersonId' here, not 'UUID')
 
 @Repository
 public interface PersonRepository extends JpaRepository<Person, PersonId> {
