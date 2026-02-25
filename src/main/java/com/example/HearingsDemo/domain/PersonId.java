@@ -11,6 +11,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonId implements Serializable {
+
+    // Version number: Version 1 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
     private UUID hearingId;
 }
