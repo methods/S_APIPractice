@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.lang.NonNull;
 
-import java.beans.Transient;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
