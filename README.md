@@ -30,11 +30,11 @@ Because Docker Desktop requires a paid license for enterprise use, we use **Coli
 
 ### Accessing the Local Database
 To inspect the local database, you must run psql inside the container:
-``` bash
+```bash
 docker exec -it local-postgres psql -U local_user -d hearings_demo
 ```
 **Useful commands:**
-- \dt (list all (tables)
+- \dt (list all tables)
 - \d table_name (view structure of specific table)
 - SELECT * FROM table_name (View table data (optional LIMIT number))
 - \x (toggle expanded view)
@@ -43,8 +43,7 @@ docker exec -it local-postgres psql -U local_user -d hearings_demo
 
 ## 2. Remote Development (GitHub Codespaces)
 When opening this repository in GitHub Codespaces, the .devcontainer automatically installs Java 17, the PostgreSQL client, and configures the IDE.
-- **Database Connection:** Codespaces automatically injects GitHub Secrets (DB_URL, DB_USERNAME, DB_PASSWORD). Spring 
-Boot detects these and connects to the remote Supabase instance, bypassing the local fallbacks.
+- **Database Connection:** Codespaces automatically injects GitHub Secrets (DB_URL, DB_USERNAME, DB_PASSWORD). Spring Boot detects these and connects to the remote Supabase instance, bypassing the local fallbacks.
 - **Database Access:** Because the Devcontainer has the psql client installed, you can connect directly from the 
   Codespace terminal:
 ```bash
