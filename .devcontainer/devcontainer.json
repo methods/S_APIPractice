@@ -13,6 +13,9 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "containerEnv": {
+    "SQL_INIT_MODE": "never"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
