@@ -7,8 +7,7 @@ public record PersonResponseDTO (
 
     UUID personId,
     String firstName,
-    String lastName,
-    LocalDate dateOfBirth
+    String lastName
 
 ) {}
 
