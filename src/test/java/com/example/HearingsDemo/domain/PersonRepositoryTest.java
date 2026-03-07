@@ -25,10 +25,14 @@ class PersonRepositoryTest {
 
     // --- Helper Method to create a dummy person 
     @NonNull
-    private Person createPerson(UUID pID, UUID hID, String firstName) {
+    private Person createPerson(UUID personId, UUID hearingId, String firstName) {
+
+        // Create the composite key object
+        PersonId compositeKey = new PersonId(personId, hearingId);
+
+        // Create Entity and set single composite key
         Person p = new Person();
-        p.setId(pID);
-        p.setHearingId(hID);
+        p.setId(compositeKey);
         p.setFirstName(firstName);
         p.setLastName("TestUser");
         p.setDateOfBirth(LocalDateTime.now());
@@ -37,27 +41,26 @@ class PersonRepositoryTest {
 
     @Test
     void shouldSaveAndRetrievePersonWithCompositeKey() {
-        // 1.1. Arrange (Create unique ids)
+        // Arrange (Create unique ids)
         UUID personId = UUID.randomUUID();
         UUID hearingId = UUID.randomUUID();
-        
-        // 1.2. Create the Entity
+        // Create the Entity
         Person person = createPerson(personId, hearingId, "Original");
 
-        // 2. Act (Try to save it)
+        // Act
         personRepository.save(person); //Null type safety: The expression of type 'Person' needs unchecked conversion to conform to '@NonNull Person'
 
-        // 3. Assert
-        // Step A: Prepare the tool to find the data
+        // Prepare the tool to find the data
         PersonId compositeKey = new PersonId(personId, hearingId);
-        // Step 2: Use the tool
         Optional<Person> foundPerson = personRepository.findById(compositeKey);
 
-        // Assertions (AssertJ library)
+        // Assert
         assertThat(foundPerson).isPresent();
         assertThat(foundPerson.get().getFirstName()).isEqualTo("Original");
-        assertThat(foundPerson.get().getId()).isEqualTo(personId);
-        assertThat(foundPerson.get().getHearingId()).isEqualTo(hearingId);
+        // CHANGE 3: Assert against the nested fields in the composite key
+        assertThat(foundPerson.get().getId().getId()).isEqualTo(personId);
+        assertThat(foundPerson.get().getId().getHearingId()).isEqualTo(hearingId);
+
     }
 
     @Test
@@ -69,7 +72,7 @@ class PersonRepositoryTest {
         // Save to repository
         personRepository.save(original);
 
-        // 2. Act (Save a NEW object wiht the SAME key)
+        // 2. Act (Save a NEW object with the SAME key)
         Person updated = createPerson(id, hearingId, "NewPerson");
         // Check state can also be changed correctly
         updated.setAddress1("New Address");
@@ -79,7 +82,7 @@ class PersonRepositoryTest {
         long count = personRepository.count();
         assertThat(count).isEqualTo(1);
 
-        // 4. Verify the data 
+        // 4. Verify the data
         Person retrieved = personRepository.findById(new PersonId(id, hearingId)).get();
         assertThat(retrieved.getFirstName()).isEqualTo("NewPerson");
         assertThat(retrieved.getAddress1()).isEqualTo("New Address");
@@ -96,7 +99,7 @@ class PersonRepositoryTest {
         personRepository.save(createPerson(UUID.randomUUID(), hearingB, "thirdPerson"));
 
         // 2. Act: Search by Hearing ID (Partial Key)
-        List<Person> peopleInHearingA = personRepository.findByHearingId(hearingA);
+        List<Person> peopleInHearingA = personRepository.findById_HearingId(hearingA);
 
         // 3. Assert
         assertThat(peopleInHearingA).hasSize(2);
@@ -107,7 +110,7 @@ class PersonRepositoryTest {
         // 1. Arrange: Create ONE person
         UUID samePersonId = UUID.randomUUID();
 
-        // Create two difffernt hearings
+        // Create two different hearings
         UUID hearingA = UUID.randomUUID();
         UUID hearingB = UUID.randomUUID();
 
@@ -116,7 +119,7 @@ class PersonRepositoryTest {
         personRepository.save(createPerson(samePersonId, hearingB, "SamePerson"));
 
         // Act: Try to find them just by using the person's UUID ID
-        List<Person> history = personRepository.findById(samePersonId);
+        List<Person> history = personRepository.findById_Id(samePersonId);
 
         // Assert
         assertThat(history).hasSize(2);
