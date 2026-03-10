@@ -20,7 +20,7 @@ public class PersonService {
     }
 
 
-    public Optional<PersonResponseDTO> getPersonById(UUID hearingId, UUID personId) {
+    public Optional<PersonResponseDTO> getPersonById(UUID personId, UUID hearingId) {
         // 1. Instantiate comp key
         PersonId compositeKey = new PersonId(personId, hearingId);
 

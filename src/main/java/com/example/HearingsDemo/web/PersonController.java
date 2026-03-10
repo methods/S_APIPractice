@@ -25,7 +25,7 @@ public class PersonController {
         @PathVariable UUID personId) { //
         // @PathVariable takes value
         // 1. Call the service
-        return personService.getPersonById(hearingId, personId)
+        return personService.getPersonById(personId, hearingId)
             // 2. If data exists, wrap it in HTTP 200 OK
             .map(ResponseEntity::ok)
             // 3. If empty (Optional.empty), return HTTP 404 Not Found

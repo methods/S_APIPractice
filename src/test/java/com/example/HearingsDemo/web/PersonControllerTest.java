@@ -43,7 +43,7 @@ public class PersonControllerTest {
         );
         
         // Mock service layer to return the mock DTO created above
-        Mockito.when(personService.getPersonById(hearingId, personId))
+        Mockito.when(personService.getPersonById(personId, hearingId))
             .thenReturn(Optional.of(mockResponse));
 
         // Act & Assert
