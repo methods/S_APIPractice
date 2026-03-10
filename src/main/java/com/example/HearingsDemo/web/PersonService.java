@@ -34,7 +34,7 @@ public class PersonService {
     // Private Mapping Helper method
     private PersonResponseDTO mapToDTO(Person personEntity) {
         return new PersonResponseDTO(
-            personEntity.getId().getId(),
+            personEntity.getId().getPersonUuid(),
             personEntity.getFirstName(),
             personEntity.getLastName()
         );

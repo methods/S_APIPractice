@@ -58,7 +58,7 @@ class PersonRepositoryTest {
         assertThat(foundPerson).isPresent();
         assertThat(foundPerson.get().getFirstName()).isEqualTo("Original");
         // CHANGE 3: Assert against the nested fields in the composite key
-        assertThat(foundPerson.get().getId().getId()).isEqualTo(personId);
+        assertThat(foundPerson.get().getId().getPersonUuid()).isEqualTo(personId);
         assertThat(foundPerson.get().getId().getHearingId()).isEqualTo(hearingId);
 
     }
@@ -119,7 +119,7 @@ class PersonRepositoryTest {
         personRepository.save(createPerson(samePersonId, hearingB, "SamePerson"));
 
         // Act: Try to find them just by using the person's UUID ID
-        List<Person> history = personRepository.findById_Id(samePersonId);
+        List<Person> history = personRepository.findById_PersonUuid(samePersonId);
 
         // Assert
         assertThat(history).hasSize(2);

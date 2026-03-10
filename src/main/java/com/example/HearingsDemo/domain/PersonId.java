@@ -19,7 +19,7 @@ public class PersonId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "id")
-    private UUID id;
+    private UUID personUuid;
 
     @Column(name = "hearing_id")
     private UUID hearingId;

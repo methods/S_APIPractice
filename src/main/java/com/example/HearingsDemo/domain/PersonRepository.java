@@ -14,6 +14,6 @@ public interface PersonRepository extends JpaRepository<Person, PersonId> {
     List<Person> findById_HearingId(UUID hearingId);
 
     // Find every hearing for a specific person (Partial Key Search Part B)
-    List<Person> findById_Id(UUID id);
+    List<Person> findById_PersonUuid(UUID id);
     
 }
