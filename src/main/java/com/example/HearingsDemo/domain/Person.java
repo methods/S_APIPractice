@@ -53,13 +53,13 @@ public class Person {
         if (this == o) return true;
 
         // Step 2: Safety and Type Check
-        if (o == null || getClass() != o.getClass()) return false; 
+        if (!(o instanceof Person)) return false;
 
         // Step 3: Casting aka the "translation"
         Person person = (Person) o;
 
         // Step 4: The Business Logic (Identity Comparison)
-        return Objects.equals(id, person.id);
+        return id != null && Objects.equals(id, person.getId());
     }
 
     @Override
