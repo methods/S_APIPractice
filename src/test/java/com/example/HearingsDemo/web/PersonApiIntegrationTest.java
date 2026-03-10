@@ -3,6 +3,7 @@ package com.example.HearingsDemo.web;
 import com.example.HearingsDemo.domain.Person;
 import com.example.HearingsDemo.domain.PersonId;
 import com.example.HearingsDemo.domain.PersonRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,6 +30,9 @@ class PersonApiIntegrationTest {
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
+    EntityManager entityManager;
+
     @Test
     void shouldReturnPersonDetailsWhenRecordExistsInDatabase() throws Exception {
         // Arrange
@@ -43,6 +47,8 @@ class PersonApiIntegrationTest {
         testPerson.setLastName("Doe");
 
         personRepository.save(testPerson);
+        entityManager.flush();
+        entityManager.clear();
 
         // Act & Assert
         // Make a REAL HTTP call to the endpoint
