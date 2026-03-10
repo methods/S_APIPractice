@@ -2,6 +2,8 @@ package com.example.HearingsDemo.web;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +61,20 @@ public class PersonControllerTest {
         .andExpect(jsonPath("$.lastName").value("Doe"));
 
     }
-    
+
+    @ParameterizedTest(name = "Run {index}: hearingId={0}, personId={1}")
+    @CsvSource({
+        "not-a-uuid, 123e4567-e89b-12d3-a456-426614174000", // Bad Hearing ID, Good Person ID
+        "123e4567-e89b-12d3-a456-426614174000, not-a-uuid", // Good Hearing ID, Bad Person ID
+        "invalid-hearing, invalid-person"                   // Both Bad
+    })
+    void shouldReturn400BadRequest_whenIdsAreNotValidUUIDs(String hearingIdParam, String personIdParam) throws Exception {
+
+        //Act & Assert
+        mockMvc.perform(get("/api/v1/hearings/{hearingId}/persons/{personId}", hearingIdParam, personIdParam)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
+
+
+    }
 }
