@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc; // <-- Simulates HTTP calls
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,7 +45,7 @@ public class PersonControllerTest {
         );
         
         // Mock service layer to return the mock DTO created above
-        Mockito.when(personService.getPersonById(personId, hearingId))
+        when(personService.getPersonById(personId, hearingId))
             .thenReturn(Optional.of(mockResponse));
 
         // Act & Assert
@@ -76,5 +78,14 @@ public class PersonControllerTest {
             .andExpect(status().isBadRequest());
 
 
+    }
+
+    @Test
+    void shouldReturn404NotFound_whenPersonDoesNotExist() throws Exception {
+        when(personService.getPersonById(any(UUID.class), any(UUID.class))).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/v1/hearings/{hearingId}/persons/{personId}", UUID.randomUUID(), UUID.randomUUID())
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
     }
 }
