@@ -1,5 +1,7 @@
 package com.example.HearingsDemo.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,11 +12,15 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Embeddable
 public class PersonId implements Serializable {
 
     // Version number: Version 1 
     private static final long serialVersionUID = 1L;
 
-    private UUID id;
+    @Column(name = "id")
+    private UUID personUuid;
+
+    @Column(name = "hearing_id")
     private UUID hearingId;
 }
