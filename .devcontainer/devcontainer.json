@@ -14,7 +14,8 @@
     "dockerfile": "Dockerfile"
   },
   "containerEnv": {
-    "SQL_INIT_MODE": "never"
+    "SQL_INIT_MODE": "never",
+    "HIBERNATE_DDL_AUTO": "validate"
   },
   "customizations": {
     "vscode": {
