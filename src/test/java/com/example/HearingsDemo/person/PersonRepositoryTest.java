@@ -1,4 +1,4 @@
-package com.example.HearingsDemo.domain;
+package com.example.HearingsDemo.person;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

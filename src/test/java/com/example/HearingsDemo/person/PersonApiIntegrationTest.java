@@ -1,8 +1,5 @@
-package com.example.HearingsDemo.web;
+package com.example.HearingsDemo.person;
 
-import com.example.HearingsDemo.domain.Person;
-import com.example.HearingsDemo.domain.PersonId;
-import com.example.HearingsDemo.domain.PersonRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

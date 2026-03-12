@@ -1,4 +1,4 @@
-package com.example.HearingsDemo.domain;
+package com.example.HearingsDemo.person;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

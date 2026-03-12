@@ -1,4 +1,4 @@
-package com.example.HearingsDemo.domain;
+package com.example.HearingsDemo.person;
 
 import jakarta.persistence.*;
 import lombok.Getter;
