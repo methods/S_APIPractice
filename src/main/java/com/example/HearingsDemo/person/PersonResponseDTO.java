@@ -1,4 +1,4 @@
-package com.example.HearingsDemo.web;
+package com.example.HearingsDemo.person;
 
 import java.util.UUID;
 

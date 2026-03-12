@@ -1,8 +1,5 @@
-package com.example.HearingsDemo.web;
+package com.example.HearingsDemo.person;
 
-import com.example.HearingsDemo.domain.Person;
-import com.example.HearingsDemo.domain.PersonId;
-import com.example.HearingsDemo.domain.PersonRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
