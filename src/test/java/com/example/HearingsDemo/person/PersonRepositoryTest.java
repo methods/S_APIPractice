@@ -63,6 +63,9 @@ class PersonRepositoryTest {
 
     }
 
+    // LEARNING NOTE: This test verifies the Hibernate Composite Key mapping logic.
+    // While this specific API is read-only (CQRS Query side), we keep this test
+    // to ensure the @EmbeddedId is correctly configured for identity.
     @Test
     void shouldUpdateExistingPersonWhenIdMatches() {
         // 1. Arrange
