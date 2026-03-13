@@ -40,7 +40,7 @@ public class PersonControllerTest {
         UUID hearingId = UUID.randomUUID();
         UUID personId = UUID.randomUUID();
         PersonResponseDTO mockResponse = new PersonResponseDTO(
-            personId, "John", "Doe"
+            personId, hearingId, "John", "Doe"
         );
         
         // Mock service layer to return the mock DTO created above
