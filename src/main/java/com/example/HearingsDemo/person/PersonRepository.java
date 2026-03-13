@@ -11,9 +11,9 @@ import java.util.UUID;
 public interface PersonRepository extends JpaRepository<Person, PersonId> {
 
     // Find everyone in a specific hearing (Partial Key Search Part A)
-    List<Person> findById_HearingId(UUID hearingId);
+    List<Person> findAllById_HearingId(UUID hearingId);
 
     // Find every hearing for a specific person (Partial Key Search Part B)
-    List<Person> findById_PersonUuid(UUID id);
+    List<Person> findAllById_PersonUuid(UUID id);
     
 }
