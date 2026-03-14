@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 
 import org.springframework.test.web.servlet.MockMvc; // <-- Simulates HTTP calls
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,4 +88,31 @@ public class PersonControllerTest {
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
+
+    // ================================
+    // GET /by hearingId
+    // ================================
+
+    @Test
+    @DisplayName("Should return 200 OK and a list of persons for a hearing")
+    void shouldReturnListOfPersonsWhenHearingExists() throws Exception {
+
+        // 1. Arrange
+        UUID hearingId = UUID.randomUUID();
+        PersonResponseDTO p1 = new PersonResponseDTO(UUID.randomUUID(), hearingId, "John", "Doe");
+        PersonResponseDTO p2 = new PersonResponseDTO(UUID.randomUUID(), hearingId, "Jane", "Smith");
+
+        when(personService.getPersonsByHearingId(hearingId)).thenReturn(List.of(p1, p2));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/v1/hearings/{hearingId}/persons", hearingId)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.size()").value(2))
+            .andExpect(jsonPath("$[0].firstName").value("John"))
+            .andExpect(jsonPath("$[1].firstName").value("Jane"));
+
+    }
+
 }

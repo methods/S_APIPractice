@@ -1,6 +1,7 @@
 package com.example.HearingsDemo.person;
 
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -64,6 +65,53 @@ class PersonApiIntegrationTest {
         mockMvc.perform(get("/api/v1/hearings/{hearingId}/persons/{personId}", UUID.randomUUID(), UUID.randomUUID())
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
+    }
+
+    // ================================
+    // GET /by hearingId
+    // ================================
+    @Test
+    void shouldReturnEmptyListWhenNoPersonsExistForHearing() throws Exception {
+        mockMvc.perform(get("/api/v1/hearings/{hearingId}/persons", UUID.randomUUID()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.size()").value(0));
+    }
+
+    @Test
+    @DisplayName("Should return a list of persons for a specific hearing from the database")
+    void shouldReturnCollectionFromDatabase() throws Exception {
+        // Arrange
+        UUID hearingA = UUID.randomUUID();
+        UUID hearingB = UUID.randomUUID();
+
+        // Two people in Hearing A
+        personRepository.save(createEntity(UUID.randomUUID(), hearingA, "John"));
+        personRepository.save(createEntity(UUID.randomUUID(), hearingA, "Jane"));
+
+        // One person in Hearing B (to test filtering)
+        personRepository.save(createEntity(UUID.randomUUID(), hearingB, "Isolated"));
+
+        // Force Hibernate to write to db not save it in cache
+        entityManager.flush();
+        entityManager.clear();
+
+        // Act & Assert
+        mockMvc.perform(get("/api/v1/hearings/{hearingId}/persons", hearingA)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.size()").value(2))
+
+            .andExpect(jsonPath("$[*].firstName").value(org.hamcrest.Matchers.containsInAnyOrder("John", "Jane")))
+
+            .andExpect(jsonPath("$[*].hearingId").value(org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is(hearingA.toString()))));
+
+    }
+
+    private Person createEntity(UUID pId, UUID hId, String name) {
+        Person p = new Person();
+        p.setId(new PersonId(pId, hId));
+        p.setFirstName(name);
+        return p;
     }
 
 }
