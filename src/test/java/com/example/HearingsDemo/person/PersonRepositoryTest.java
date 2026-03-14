@@ -63,6 +63,9 @@ class PersonRepositoryTest {
 
     }
 
+    // LEARNING NOTE: This test verifies the Hibernate Composite Key mapping logic.
+    // While this specific API is read-only (CQRS Query side), we keep this test
+    // to ensure the @EmbeddedId is correctly configured for identity.
     @Test
     void shouldUpdateExistingPersonWhenIdMatches() {
         // 1. Arrange
@@ -88,21 +91,38 @@ class PersonRepositoryTest {
         assertThat(retrieved.getAddress1()).isEqualTo("New Address");
     }
 
+    // ==================================================================
+    // GET partial key tests
+    // ==================================================================
+
+
     @Test
-    void shouldFindPeopleByPartialKey() {
-        // 1. Arrange: Create 3 people
-        // Two are in Hearing A. One in Hearing B
+    void shouldFindAllPersonsByHearingId() {
+        // Plan save three people to the db, two with the same hearing id
+        // see if the correct two people are returned
+        //Arrange
         UUID hearingA = UUID.randomUUID();
         UUID hearingB = UUID.randomUUID();
-        personRepository.save(createPerson(UUID.randomUUID(), hearingA, "firstPerson"));
-        personRepository.save(createPerson(UUID.randomUUID(), hearingA, "secondPerson"));
-        personRepository.save(createPerson(UUID.randomUUID(), hearingB, "thirdPerson"));
 
-        // 2. Act: Search by Hearing ID (Partial Key)
-        List<Person> peopleInHearingA = personRepository.findById_HearingId(hearingA);
+        // Create Persons via helper method above and save to DB
+        Person person1 = createPerson(UUID.randomUUID(), hearingA, "Person1");
+        Person person2 = createPerson(UUID.randomUUID(), hearingA, "Person2");
+        Person person3 = createPerson(UUID.randomUUID(), hearingB, "Person3");
 
-        // 3. Assert
-        assertThat(peopleInHearingA).hasSize(2);
+        // saveAll() instead of save() individually for better performance
+        personRepository.saveAll(List.of(person1, person2, person3));
+
+        // Act
+        List<Person> results = personRepository.findAllById_HearingId(hearingA);
+
+        // Assert
+        assertThat(results).hasSize(2)
+            .extracting(p -> p.getId().getHearingId())
+            .containsOnly(hearingA);
+        assertThat(results).extracting(Person::getFirstName)
+            .containsExactlyInAnyOrder("Person1", "Person2");
+
+
     }
 
     @Test
@@ -119,10 +139,14 @@ class PersonRepositoryTest {
         personRepository.save(createPerson(samePersonId, hearingB, "SamePerson"));
 
         // Act: Try to find them just by using the person's UUID ID
-        List<Person> history = personRepository.findById_PersonUuid(samePersonId);
+        List<Person> history = personRepository.findAllById_PersonUuid(samePersonId);
 
         // Assert
-        assertThat(history).hasSize(2);
+        assertThat(history).hasSize(2)
+            .extracting(p -> p.getId().getPersonUuid())
+            .containsOnly(samePersonId);
+        assertThat(history).extracting(p -> p.getId().getHearingId())
+            .containsExactlyInAnyOrder(hearingA, hearingB);
 
     }
 

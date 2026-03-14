@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,6 +31,17 @@ public class PersonController {
             .map(ResponseEntity::ok)
             // 3. If empty (Optional.empty), return HTTP 404 Not Found
             .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/hearings/{hearingId}/persons")
+    public ResponseEntity<List<PersonResponseDTO>> getPersonsByHearingId(
+        @PathVariable UUID hearingId
+    ) {
+        // Call service method that returns a List
+        List<PersonResponseDTO> persons = personService.getPersonsByHearingId(hearingId);
+
+        // Return 200 OK even if list is empty
+        return ResponseEntity.ok(persons);
     }
     
 }
