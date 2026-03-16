@@ -10,10 +10,11 @@ import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
@@ -42,24 +43,77 @@ class PersonServiceTest {
         return p;
     }
 
+    // ================================================================
+    // Single lookup tests
+    // ================================================================
+
     @Test
-    @DisplayName("Should return a list of DTOs when people exist for a hearing")
-    void shouldReturnDtoListForHearing() {
+    @DisplayName("Should return person DTO when person and hearing id matches (composite key match)")
+    void shouldReturnPersonDtoCompositeKeyMatch() {
+        // Arrange
+        UUID personUuid = UUID.randomUUID();
+        UUID hearingId = UUID.randomUUID();
+        PersonId compositeKey = new PersonId(personUuid, hearingId);
+
+        // Create the "Database" version of the person
+        Person mockEntity = createPerson(personUuid, hearingId, "John");
+
+        // Arrange mock
+        when(personRepository.findById(compositeKey)).thenReturn(Optional.of(mockEntity));
+
+        // Act
+        Optional<PersonResponseDTO> result = personService.getPersonById(personUuid, hearingId);
+
+        // Assert
+        assertThat(result).isPresent();
+        assertThat(result.get().firstName()).isEqualTo("John");
+        assertThat(result.get().personId()).isEqualTo(personUuid);
+
+        // Verify the repo was actually called exactly once
+        verify(personRepository, times(1)).findById(compositeKey);
+
+    }
+
+    @Test
+    @DisplayName("Should return empty Optional when person not found")
+    void shouldReturnEmptyWhenNoCompositeKeyMatch() {
+        // Arrange
+        UUID personUuid = UUID.randomUUID();
+        UUID hearingId = UUID.randomUUID();
+        PersonId compositeKey = new PersonId(personUuid, hearingId);
+
+        when(personRepository.findById(compositeKey)).thenReturn(Optional.empty());
+
+        // Act and Assert
+        Optional<PersonResponseDTO> result = personService.getPersonById(personUuid, hearingId);
+        assertThat(result).isEmpty();
+        verify(personRepository).findById(compositeKey);
+
+    }
+
+
+    // ================================================================
+    // Collection lookup tests
+    // ================================================================
+
+    @Test
+    @DisplayName("Should return a collection wrapper when people exist for a hearing")
+    void shouldReturnCollectionWrapperForHearing() {
 
         // Arrange: create a person
         UUID hearingId = UUID.randomUUID();
-        Person mockPerson = createPerson(UUID.randomUUID(), hearingId, "John");
+        Person mockEntity = createPerson(UUID.randomUUID(), hearingId, "John");
 
-        // Instruct mock
-        when(personRepository.findAllById_HearingId(hearingId)).thenReturn(List.of(mockPerson));
+        when(personRepository.findAllById_HearingId(hearingId)).thenReturn(List.of(mockEntity));
 
         // Act
-        List<PersonResponseDTO> results = personService.getPersonsByHearingId(hearingId);
+        PersonCollectionResponseDTO result = personService.getPersonsByHearingId(hearingId);
 
         // Assert
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0).firstName()).isEqualTo("John");
-        assertThat(results.get(0).hearingId()).isEqualTo(hearingId);
+        assertThat(result.totalCount()).isEqualTo(1);
+        assertThat(result.persons()).hasSize(1);
+        assertThat(result.persons().get(0).firstName()).isEqualTo("John");
+        assertThat(result.persons().get(0).hearingId()).isEqualTo(hearingId);
 
     }
 

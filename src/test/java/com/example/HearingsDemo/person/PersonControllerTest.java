@@ -94,24 +94,28 @@ public class PersonControllerTest {
     // ================================
 
     @Test
-    @DisplayName("Should return 200 OK and a list of persons for a hearing")
-    void shouldReturnListOfPersonsWhenHearingExists() throws Exception {
+    @DisplayName("Should return 200 OK and a collection wrapper of persons for a hearing")
+    void shouldReturnCollectionOfPersonsWhenHearingExists() throws Exception {
 
         // 1. Arrange
         UUID hearingId = UUID.randomUUID();
         PersonResponseDTO p1 = new PersonResponseDTO(UUID.randomUUID(), hearingId, "John", "Doe");
         PersonResponseDTO p2 = new PersonResponseDTO(UUID.randomUUID(), hearingId, "Jane", "Smith");
-
-        when(personService.getPersonsByHearingId(hearingId)).thenReturn(List.of(p1, p2));
+        // Create the List
+        List<PersonResponseDTO> mockList = List.of(p1, p2);
+        when(personService.getPersonsByHearingId(hearingId))
+            .thenReturn(new PersonCollectionResponseDTO(mockList, mockList.size()));
 
         // Act & Assert
         mockMvc.perform(get("/api/v1/hearings/{hearingId}/persons", hearingId)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.size()").value(2))
-            .andExpect(jsonPath("$[0].firstName").value("John"))
-            .andExpect(jsonPath("$[1].firstName").value("Jane"));
+            .andExpect(jsonPath("$.persons.size()").value(2))
+            .andExpect(jsonPath("$.persons[0].firstName").value("John"))
+            .andExpect(jsonPath("$.persons[1].firstName").value("Jane"))
+            // new metadata field
+            .andExpect(jsonPath("$.totalCount").value(2));
 
     }
 

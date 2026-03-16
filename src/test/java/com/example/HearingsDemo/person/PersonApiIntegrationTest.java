@@ -74,7 +74,8 @@ class PersonApiIntegrationTest {
     void shouldReturnEmptyListWhenNoPersonsExistForHearing() throws Exception {
         mockMvc.perform(get("/api/v1/hearings/{hearingId}/persons", UUID.randomUUID()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.size()").value(0));
+            .andExpect(jsonPath("$.persons.size()").value(0))
+            .andExpect(jsonPath("$.totalCount").value(0));
     }
 
     @Test
@@ -99,11 +100,11 @@ class PersonApiIntegrationTest {
         mockMvc.perform(get("/api/v1/hearings/{hearingId}/persons", hearingA)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.size()").value(2))
+            .andExpect(jsonPath("$.persons.size()").value(2))
+            .andExpect(jsonPath("$.totalCount").value(2))
 
-            .andExpect(jsonPath("$[*].firstName").value(org.hamcrest.Matchers.containsInAnyOrder("John", "Jane")))
-
-            .andExpect(jsonPath("$[*].hearingId").value(org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is(hearingA.toString()))));
+            .andExpect(jsonPath("$.persons[*].firstName").value(org.hamcrest.Matchers.containsInAnyOrder("John", "Jane")))
+            .andExpect(jsonPath("$.persons[*].hearingId").value(org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is(hearingA.toString()))));
 
     }
 
