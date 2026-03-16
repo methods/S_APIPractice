@@ -31,11 +31,16 @@ public class PersonService {
 
     }
     // --- Collection Lookup ---
-    public List<PersonResponseDTO> getPersonsByHearingId(UUID hearingId) {
-        return personRepository.findAllById_HearingId(hearingId)
+    public PersonCollectionResponseDTO getPersonsByHearingId(UUID hearingId) {
+
+        // 1. get the List
+        List<PersonResponseDTO> personsList = personRepository.findAllById_HearingId(hearingId)
             .stream()
             .map(this::mapToDTO) // Uses the unified helper
             .toList();
+
+        // 2. Return it in wrapper
+        return new PersonCollectionResponseDTO(personsList, personsList.size());
     }
 
 

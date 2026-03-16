@@ -43,23 +43,23 @@ class PersonServiceTest {
     }
 
     @Test
-    @DisplayName("Should return a list of DTOs when people exist for a hearing")
-    void shouldReturnDtoListForHearing() {
+    @DisplayName("Should return a collection wrapper when people exist for a hearing")
+    void shouldReturnCollectionWrapperForHearing() {
 
         // Arrange: create a person
         UUID hearingId = UUID.randomUUID();
-        Person mockPerson = createPerson(UUID.randomUUID(), hearingId, "John");
+        Person mockEntity = createPerson(UUID.randomUUID(), hearingId, "John");
 
-        // Instruct mock
-        when(personRepository.findAllById_HearingId(hearingId)).thenReturn(List.of(mockPerson));
+        when(personRepository.findAllById_HearingId(hearingId)).thenReturn(List.of(mockEntity));
 
         // Act
-        List<PersonResponseDTO> results = personService.getPersonsByHearingId(hearingId);
+        PersonCollectionResponseDTO result = personService.getPersonsByHearingId(hearingId);
 
         // Assert
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0).firstName()).isEqualTo("John");
-        assertThat(results.get(0).hearingId()).isEqualTo(hearingId);
+        assertThat(result.totalCount()).isEqualTo(1);
+        assertThat(result.persons()).hasSize(1);
+        assertThat(result.persons().get(0).firstName()).isEqualTo("John");
+        assertThat(result.persons().get(0).hearingId()).isEqualTo(hearingId);
 
     }
 

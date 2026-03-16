@@ -34,14 +34,14 @@ public class PersonController {
     }
 
     @GetMapping("/hearings/{hearingId}/persons")
-    public ResponseEntity<List<PersonResponseDTO>> getPersonsByHearingId(
+    public ResponseEntity<PersonCollectionResponseDTO> getPersonsByHearingId(
         @PathVariable UUID hearingId
     ) {
         // Call service method that returns a List
-        List<PersonResponseDTO> persons = personService.getPersonsByHearingId(hearingId);
+        PersonCollectionResponseDTO personsList = personService.getPersonsByHearingId(hearingId);
 
         // Return 200 OK even if list is empty
-        return ResponseEntity.ok(persons);
+        return ResponseEntity.ok(personsList);
     }
     
 }
