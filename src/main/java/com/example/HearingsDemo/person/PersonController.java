@@ -37,10 +37,10 @@ public class PersonController {
     public ResponseEntity<PersonCollectionResponseDTO> getPersonsByHearingId(
         @PathVariable UUID hearingId
     ) {
-        // Call service method that returns a List
+        // Call service method that returns a PersonCollectionResponseDTO
         PersonCollectionResponseDTO personsList = personService.getPersonsByHearingId(hearingId);
 
-        // Return 200 OK even if list is empty
+        // Return 200 OK even if List is empty
         return ResponseEntity.ok(personsList);
     }
     
