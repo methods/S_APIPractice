@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,6 +64,32 @@ class HearingRepositoryTest {
         assertThat(foundHearing.get().getId().getHearingUuid()).isEqualTo(hearingUuid);
         assertThat(foundHearing.get().getId().getPersonUuid()).isEqualTo(personUuid);
 
+
+    }
+
+    // ===========================================================
+    // Partial Key lookup - returns collection object
+    // ===========================================================
+    @Test
+    void shouldReturnAllRowsForASingleHearingUuid() {
+
+        // Arrange:
+        UUID commonHearingUuid = UUID.randomUUID();
+        UUID personUuid_1 = UUID.randomUUID();
+        UUID personUuid_2 = UUID.randomUUID();
+
+        // Create entity and save to the db
+        hearingRepository.save(createHearing(commonHearingUuid, personUuid_1));
+        hearingRepository.save(createHearing(commonHearingUuid, personUuid_2));
+
+        // Act -
+        List<Hearing> results = hearingRepository.findAllById_HearingUuid(commonHearingUuid);
+
+        assertThat(results).hasSize(2);
+        assertThat(results.get(0).getId().getHearingUuid()).isEqualTo(commonHearingUuid);
+        assertThat(results).allSatisfy(hearing -> {
+            assertThat(hearing.getId().getHearingUuid()).isEqualTo(commonHearingUuid);
+        });
 
     }
 
