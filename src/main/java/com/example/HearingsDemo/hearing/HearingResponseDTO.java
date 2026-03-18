@@ -7,7 +7,7 @@ import java.util.UUID;
 
 
 public record HearingResponseDTO (
-    UUID hearingUuid,
+    UUID hearingId,
     LocalDateTime startDate,
     String courtRoom, // Note: Liquibase called it court_centre_name
     String judgeName,

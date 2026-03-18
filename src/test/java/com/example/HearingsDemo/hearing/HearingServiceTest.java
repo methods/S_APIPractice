@@ -68,7 +68,7 @@ class HearingServiceTest {
         HearingResponseDTO result = hearingService.getHearingById(commonHearingUuid);
 
         // Assert
-        assertThat(result.hearingUuid()).isEqualTo(commonHearingUuid);
+        assertThat(result.hearingId()).isEqualTo(commonHearingUuid);
         assertThat(result.judgeName()).isEqualTo("Judge Bollinger");
         assertThat(result.attendeeIds()).hasSize(2).containsExactlyInAnyOrder(p1_Uuid, p2_Uuid);
 
