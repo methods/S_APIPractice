@@ -45,7 +45,7 @@ class HearingRepositoryTest {
     // Single lookup
     // ===========================================================
     @Test
-    void shouldSaveAndRetrieveHearingWithCompoSiteKey() {
+    void shouldSaveAndRetrieveHearingWithCompositeKey() {
 
         // Arrange
         UUID hearingUuid = UUID.randomUUID();

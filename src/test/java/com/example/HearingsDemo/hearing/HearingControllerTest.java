@@ -76,7 +76,7 @@ public class HearingControllerTest {
 
     @ParameterizedTest(name = "Run {index}: hearingId={0}")
     @CsvSource({
-        "not-a-uuid", // Bad Hearing ID, Good Person ID
+        "not-a-uuid" // Bad Hearing ID, Good Person ID
     })
     void shouldReturn400BadRequest_whenIdsAreNotValidUUID(String hearingUuid ) throws Exception {
 
