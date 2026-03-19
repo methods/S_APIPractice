@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -30,23 +29,29 @@ public class HearingControllerTest {
     @MockitoBean
     private HearingService hearingService;
 
+
     @Test
-    @DisplayName("Should return 200 OK and hearing details when ID exists")
-    void shouldReturnHearingWhenExists() throws Exception {
+    @DisplayName("Should return 200 OK and hearing details with attendee names")
+    void shouldReturnHearingWithAttendeesWhenExists() throws Exception {
         // Arrange
         UUID hearingUuid = UUID.randomUUID();
-        // Create attendeeId List
-        List<UUID> attendeeIds = List.of(UUID.randomUUID(), UUID.randomUUID());
+        UUID p1_Uuid = UUID.randomUUID();
 
+        // 1. Create the new AttendeeDTO objects
+        List<AttendeeDTO> attendees = List.of(
+            new AttendeeDTO(p1_Uuid, "John", "Doe")
+        );
+
+        //2. Create the mock response
         HearingResponseDTO mockResponse = new HearingResponseDTO(
             hearingUuid,
             LocalDateTime.now(),
             "BS567",
             "Judge Jay",
-            attendeeIds
+            attendees
         );
 
-        // MOck Service
+        // 3. Mock Service
         when(hearingService.getHearingById(hearingUuid))
             .thenReturn(mockResponse);
 
@@ -56,8 +61,10 @@ public class HearingControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.judgeName").value("Judge Jay"))
-            .andExpect(jsonPath("$.attendeeIds").isArray())
-            .andExpect(jsonPath("$.attendeeIds", hasSize(2)));
+            .andExpect(jsonPath("$.attendees").isArray())
+            .andExpect(jsonPath("$.attendees[0].personId").value(p1_Uuid.toString()))
+            .andExpect(jsonPath("$.attendees[0].firstName").value("John"))
+            .andExpect(jsonPath("$.attendees[0].lastName").value("Doe"));
 
     }
 

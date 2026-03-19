@@ -1,5 +1,7 @@
 package com.example.HearingsDemo.hearing;
 
+import com.example.HearingsDemo.person.Person;
+import com.example.HearingsDemo.person.PersonRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,43 +13,53 @@ import java.util.UUID;
 public class HearingService {
 
     private final HearingRepository hearingRepository;
+    private final PersonRepository personRepository;
 
-    public HearingService(HearingRepository hearingRepository) {
+    public HearingService(HearingRepository hearingRepository, PersonRepository personRepository) {
         this.hearingRepository = hearingRepository;
+        this.personRepository = personRepository;
     }
 
-    // --- Single lookup ---
+    // --- Single lookup with Application-Side Join (APL)---
     public HearingResponseDTO getHearingById(UUID hearingId) {
 
-        // Fetch rows
-        List<Hearing> rows = hearingRepository.findAllById_HearingUuid(hearingId);
+        // 1. Get the hearing rows
+        List<Hearing> hearingRows = hearingRepository.findAllById_HearingUuid(hearingId);
 
-        // Handle Not Found
-        if (rows.isEmpty()) {
+        if (hearingRows.isEmpty()) {
             throw new ResourceNotFoundException("Hearing not found with ID: " + hearingId);
         }
 
-        return mapToDTO(rows);
+        // 3. OPTIMIZED FETCH: Get the people associated with this hearing via PersonRepository partial key search
+        List<Person> personEntities = personRepository.findAllById_HearingId(hearingId);
+
+        // 4. (APL) Map everything with the helper function
+        return mapToDTO(hearingRows, personEntities);
 
     }
 
     // --- Helper Mapper: Takes a List, returns a Single DTO
-    private HearingResponseDTO mapToDTO(List<Hearing> rows) {
+    private HearingResponseDTO mapToDTO(List<Hearing> hearingRows, List<Person> personEntities) {
 
-        // Get shared details: Deduplication
-        Hearing firstRow = rows.get(0);
+        // 5. Get shared details: Deduplication
+        Hearing firstRow = hearingRows.get(0);
 
-        // Gather attendee IDs
-        List<UUID> attendeeIds = rows.stream()
-            .map(h -> h.getId().getPersonUuid())
+        // 6. Turn personEntities into AttendeeDTOs
+        List<AttendeeDTO> attendees = personEntities.stream()
+            .map(p -> new AttendeeDTO(
+                p.getId().getPersonUuid(),
+                p.getFirstName(),
+                p.getLastName()
+            ))
             .toList();
 
+        // 7. (APL) Maps final DTO fields with the correct values from hearingRow and created attendee list
         return new HearingResponseDTO(
             firstRow.getId().getHearingUuid(),
             firstRow.getStartDate(),
             firstRow.getCourtCentreName(),
             firstRow.getJudgeName(),
-            attendeeIds
+            attendees
         );
     }
 
