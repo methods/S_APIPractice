@@ -17,7 +17,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.tuple;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -109,10 +109,10 @@ class HearingServiceTest {
         assertThat(result.hearingId()).isEqualTo(commonHearingUuid);
         assertThat(result.judgeName()).isEqualTo("Judge Bollinger");
         assertThat(result.attendees())
-            .extracting(AttendeeDTO::firstName, AttendeeDTO::lastName)
+            .extracting(AttendeeDTO::personId, AttendeeDTO::firstName, AttendeeDTO::lastName)
             .containsExactlyInAnyOrder(
-            tuple("John", "Doe"),
-            tuple("Jane", "Smith")
+            tuple(p1_Uuid, "John", "Doe"),
+            tuple(p2_Uuid, "Jane", "Smith")
             );
 
     }
