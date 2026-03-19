@@ -32,14 +32,8 @@ public class HearingService {
             throw new ResourceNotFoundException("Hearing not found with ID: " + hearingId);
         }
 
-        // 2. Create the list of PersonId objects from the hearing rows
-        List<PersonId> personIds = hearingRows.stream()
-            // each row that is found, create a new personId object using the unique personId and unique hearingId
-            .map(h -> new PersonId(h.getId().getPersonUuid(), hearingId))
-            .toList();
-
-        // 3. Fetch the actual Person entities to get their names - that's why this takes in the composite key
-        List<Person> personEntities = personRepository.findAllById(personIds);
+        // 3. OPTIMIZED FETCH: Get the people associated with this hearing via PersonRepository partial key search
+        List<Person> personEntities = personRepository.findAllById_HearingId(hearingId);
 
         // 4. Map everything with the helper function
         return mapToDTO(hearingRows, personEntities);

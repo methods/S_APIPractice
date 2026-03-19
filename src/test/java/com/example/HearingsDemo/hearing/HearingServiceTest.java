@@ -93,14 +93,7 @@ class HearingServiceTest {
         Person person1 = createPerson(p1_Uuid, commonHearingUuid, "John", "Doe");
         Person person2 = createPerson(p2_Uuid, commonHearingUuid, "Jane", "Smith");
 
-        // 4. Arrange the batch fetch mock
-        // We use PersonId because that is the Primary Key of the Person table
-        List<PersonId> expectedIds = List.of(
-            new PersonId(p1_Uuid, commonHearingUuid),
-            new PersonId(p2_Uuid, commonHearingUuid)
-        );
-
-        when(personRepository.findAllById(expectedIds)).thenReturn(List.of(person1, person2));
+        when(personRepository.findAllById_HearingId(commonHearingUuid)).thenReturn(List.of(person1, person2));
 
         // Act: we expect ONE DTO back, not a list of DTOs
         HearingResponseDTO result = hearingService.getHearingById(commonHearingUuid);
