@@ -1,5 +1,7 @@
 package com.example.HearingsDemo.hearing;
 
+import com.example.HearingsDemo.person.Person;
+import com.example.HearingsDemo.person.PersonId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,6 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,23 +33,49 @@ public class HearingControllerTest {
     @MockitoBean
     private HearingService hearingService;
 
+    // Helper to create dummy Person
+    // Helper copied from PersonService test (DAMP approach)
+    @NonNull
+    private Person createPerson(UUID personId, UUID hearingId, String firstName, String lastName) {
+
+        // Create the composite key object
+        PersonId compositeKey = new PersonId(personId, hearingId);
+
+        // Create Entity and set single composite key
+        Person p = new Person();
+        p.setId(compositeKey);
+        p.setFirstName(firstName);
+        p.setLastName(lastName);
+        p.setDateOfBirth(LocalDateTime.now());
+        return p;
+    }
+
+
+    // My Controller test has also broken and i now need to add the logic for the new dto logic
+    // I need to create an attendee List and then pass it to the mockResponse
+    // As it's a unit test Can i just an array
     @Test
-    @DisplayName("Should return 200 OK and hearing details when ID exists")
-    void shouldReturnHearingWhenExists() throws Exception {
+    @DisplayName("Should return 200 OK and hearing details with attendee names")
+    void shouldReturnHearingWithAttendeesWhenExists() throws Exception {
         // Arrange
         UUID hearingUuid = UUID.randomUUID();
-        // Create attendeeId List
-        List<UUID> attendeeIds = List.of(UUID.randomUUID(), UUID.randomUUID());
+        UUID p1_Uuid = UUID.randomUUID();
 
+        // 1. Create the new AttendeeDTO objects
+        List<AttendeeDTO> attendees = List.of(
+            new AttendeeDTO(p1_Uuid, "John", "Doe")
+        );
+
+        //2. Create the mock resposne
         HearingResponseDTO mockResponse = new HearingResponseDTO(
             hearingUuid,
             LocalDateTime.now(),
             "BS567",
             "Judge Jay",
-            attendeeIds
+            attendees
         );
 
-        // MOck Service
+        // 3. Mock Service
         when(hearingService.getHearingById(hearingUuid))
             .thenReturn(mockResponse);
 
@@ -56,8 +85,9 @@ public class HearingControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.judgeName").value("Judge Jay"))
-            .andExpect(jsonPath("$.attendeeIds").isArray())
-            .andExpect(jsonPath("$.attendeeIds", hasSize(2)));
+            .andExpect(jsonPath("$.attendees").isArray())
+            .andExpect(jsonPath("$.attendees[0].firstName").value("John"))
+            .andExpect(jsonPath("$.attendees[0].lastName").value("Doe"));
 
     }
 
