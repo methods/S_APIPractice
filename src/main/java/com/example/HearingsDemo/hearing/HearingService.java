@@ -1,7 +1,6 @@
 package com.example.HearingsDemo.hearing;
 
 import com.example.HearingsDemo.person.Person;
-import com.example.HearingsDemo.person.PersonId;
 import com.example.HearingsDemo.person.PersonRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +20,12 @@ public class HearingService {
         this.personRepository = personRepository;
     }
 
-    // --- Single lookup ---
+    // --- Single lookup with Application-Side Join (APL)---
     public HearingResponseDTO getHearingById(UUID hearingId) {
 
         // 1. Get the hearing rows
         List<Hearing> hearingRows = hearingRepository.findAllById_HearingUuid(hearingId);
 
-        // Handle Not Found
         if (hearingRows.isEmpty()) {
             throw new ResourceNotFoundException("Hearing not found with ID: " + hearingId);
         }
@@ -35,7 +33,7 @@ public class HearingService {
         // 3. OPTIMIZED FETCH: Get the people associated with this hearing via PersonRepository partial key search
         List<Person> personEntities = personRepository.findAllById_HearingId(hearingId);
 
-        // 4. Map everything with the helper function
+        // 4. (APL) Map everything with the helper function
         return mapToDTO(hearingRows, personEntities);
 
     }
@@ -55,7 +53,7 @@ public class HearingService {
             ))
             .toList();
 
-        // 7. Maps final DTO fields with the correct values from hearingRow and created attendee list
+        // 7. (APL) Maps final DTO fields with the correct values from hearingRow and created attendee list
         return new HearingResponseDTO(
             firstRow.getId().getHearingUuid(),
             firstRow.getStartDate(),
