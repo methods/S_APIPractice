@@ -42,7 +42,7 @@ public class HearingControllerTest {
             new AttendeeDTO(p1_Uuid, "John", "Doe")
         );
 
-        //2. Create the mock resposne
+        //2. Create the mock response
         HearingResponseDTO mockResponse = new HearingResponseDTO(
             hearingUuid,
             LocalDateTime.now(),
@@ -62,6 +62,7 @@ public class HearingControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.judgeName").value("Judge Jay"))
             .andExpect(jsonPath("$.attendees").isArray())
+            .andExpect(jsonPath("$.attendees[0].personId").value(p1_Uuid.toString()))
             .andExpect(jsonPath("$.attendees[0].firstName").value("John"))
             .andExpect(jsonPath("$.attendees[0].lastName").value("Doe"));
 
