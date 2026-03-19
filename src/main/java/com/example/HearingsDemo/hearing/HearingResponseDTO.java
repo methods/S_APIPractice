@@ -11,5 +11,5 @@ public record HearingResponseDTO (
     LocalDateTime startDate,
     String courtCentreName, // Note: Liquibase called it court_centre_name
     String judgeName,
-    List<AttendeeDTO> attendees // Ids of all people in those rows
+    List<AttendeeDTO> attendees // Ids + Names of all people in those rows
 ) {}

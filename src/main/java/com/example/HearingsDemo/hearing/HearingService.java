@@ -35,13 +35,10 @@ public class HearingService {
         // 2. Create the list of PersonId objects from the hearing rows
         List<PersonId> personIds = hearingRows.stream()
             // each row that is found, create a new personId object using the unique personId and unique hearingId
-            // PersonId is the class for the custom composite key, so
-            // This gives us back personIds aka composite keys
             .map(h -> new PersonId(h.getId().getPersonUuid(), hearingId))
             .toList();
 
-        // 3. Fetch the actual Person entities to get their names - that's why this takes in the composite value
-        // personIds
+        // 3. Fetch the actual Person entities to get their names - that's why this takes in the composite key
         List<Person> personEntities = personRepository.findAllById(personIds);
 
         // 4. Map everything with the helper function

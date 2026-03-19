@@ -3,7 +3,6 @@ package com.example.HearingsDemo.hearing;
 import com.example.HearingsDemo.person.Person;
 import com.example.HearingsDemo.person.PersonId;
 import com.example.HearingsDemo.person.PersonRepository;
-import com.example.HearingsDemo.person.PersonService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -102,9 +101,6 @@ class HearingServiceTest {
         );
 
         when(personRepository.findAllById(expectedIds)).thenReturn(List.of(person1, person2));
-        /*
-
-         */
 
         // Act: we expect ONE DTO back, not a list of DTOs
         HearingResponseDTO result = hearingService.getHearingById(commonHearingUuid);

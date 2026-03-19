@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -51,9 +50,6 @@ public class HearingControllerTest {
     }
 
 
-    // My Controller test has also broken and i now need to add the logic for the new dto logic
-    // I need to create an attendee List and then pass it to the mockResponse
-    // As it's a unit test Can i just an array
     @Test
     @DisplayName("Should return 200 OK and hearing details with attendee names")
     void shouldReturnHearingWithAttendeesWhenExists() throws Exception {
