@@ -41,13 +41,13 @@ public class HearingService {
     }
 
     // --- Helper Mapper: Takes a List, returns a Single DTO
-    private HearingResponseDTO mapToDTO(List<Hearing> hearingRows, List<Person> personEntites) {
+    private HearingResponseDTO mapToDTO(List<Hearing> hearingRows, List<Person> personEntities) {
 
         // 5. Get shared details: Deduplication
         Hearing firstRow = hearingRows.get(0);
 
         // 6. Turn personEntities into AttendeeDTOs
-        List<AttendeeDTO> attendees = personEntites.stream()
+        List<AttendeeDTO> attendees = personEntities.stream()
             .map(p -> new AttendeeDTO(
                 p.getId().getPersonUuid(),
                 p.getFirstName(),
