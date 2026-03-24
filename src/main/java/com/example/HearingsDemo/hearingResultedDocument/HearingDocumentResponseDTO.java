@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
 
-public record HearingDocumentResponse(
+public record HearingDocumentResponseDTO(
     @Schema(description = "The specific day of the hearing this document pertains to.", example = "2023-10-31")
     LocalDate hearingDay,
 

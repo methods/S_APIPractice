@@ -78,18 +78,18 @@ class HearingDocumentServiceTest {
         when(mockRepository.findByHearingResultedDocumentId_HearingUuid(hearingUuid)).thenReturn(mockEntities);
 
         // Act
-        List<HearingDocumentResponse> results = service.getAllDocumentsByHearingId(hearingUuid);
+        List<HearingDocumentResponseDTO> results = service.getAllDocumentsByHearingId(hearingUuid);
 
         // Assert
         assertThat(results).isNotNull();
         assertThat(results).hasSize(2);
 
         // Verify Mapping
-        HearingDocumentResponse resultDto1 = results.get(0);
+        HearingDocumentResponseDTO resultDto1 = results.get(0);
         assertThat(resultDto1.hearingDay()).isEqualTo(entity1.getHearingResultedDocumentId().getHearingDay());
         assertThat(resultDto1.payload()).isEqualTo(entity1.getPayload());
 
-        HearingDocumentResponse resultDto2 = results.get(1);
+        HearingDocumentResponseDTO resultDto2 = results.get(1);
         assertThat(resultDto2.hearingDay()).isEqualTo(entity2.getHearingResultedDocumentId().getHearingDay());
         assertThat(resultDto2.payload()).isEqualTo(entity2.getPayload());
 
@@ -105,7 +105,7 @@ class HearingDocumentServiceTest {
         when(mockRepository.findByHearingResultedDocumentId_HearingUuid(hearingUuid)).thenReturn(Collections.emptyList());
 
         // ACT
-        List<HearingDocumentResponse> results = service.getAllDocumentsByHearingId(hearingUuid);
+        List<HearingDocumentResponseDTO> results = service.getAllDocumentsByHearingId(hearingUuid);
 
         // ASSERT
         assertThat(results).isNotNull();

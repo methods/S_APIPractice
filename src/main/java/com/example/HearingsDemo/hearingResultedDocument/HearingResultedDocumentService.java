@@ -23,7 +23,7 @@ public class HearingResultedDocumentService {
      * @return A list of HearingDocumentResponse DTOs. Returns an empty list if no documents are found.
      *
      */
-    public List<HearingDocumentResponse> getAllDocumentsByHearingId(UUID hearingUuid) {
+    public List<HearingDocumentResponseDTO> getAllDocumentsByHearingId(UUID hearingUuid) {
 
         // 1. Call the repository to get the database entities
         List<HearingResultedDocument> documentsEntities =
@@ -37,8 +37,8 @@ public class HearingResultedDocumentService {
     }
 
     // Private Mapping Helper method
-    private HearingDocumentResponse mapToDTO(HearingResultedDocument documentEntity) {
-        return new HearingDocumentResponse(
+    private HearingDocumentResponseDTO mapToDTO(HearingResultedDocument documentEntity) {
+        return new HearingDocumentResponseDTO(
             documentEntity.getHearingResultedDocumentId().getHearingDay(),
             documentEntity.getPayload()
         );
