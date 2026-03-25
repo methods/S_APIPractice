@@ -25,64 +25,42 @@ class HearingDocumentServiceTest {
     private HearingResultedDocumentService service;
 
     // ======================================================================
-    // Test-only helper - A simple utility class for creating test objects
+    // A simple utility class for creating test entity objects
     // ======================================================================
-    static class TestUtils {
-        public static HearingResultedDocument createHearingDocumentEntity(UUID hearingId, LocalDate hearingDay, String payload) {
-            // Using reflection to bypass private constructor for test setup
-            try {
-                var constructor = HearingResultedDocument.class.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                var entity = constructor.newInstance();
+    private HearingResultedDocument createEntity(UUID hearingUuid, LocalDate hearingDay, String payload) {
+        LocalDate dummyDate = LocalDate.parse("2000-01-01");
 
-                var idField = HearingResultedDocument.class.getDeclaredField("hearingResultedDocumentId");
-                idField.setAccessible(true);
-                idField.set(entity, new HearingResultedDocumentId(hearingId, hearingDay));
-
-                var payloadField = HearingResultedDocument.class.getDeclaredField("payload");
-                payloadField.setAccessible(true);
-                payloadField.set(entity, payload);
-
-                // We can set other fields if needed for other tests
-                var startDateField = HearingResultedDocument.class.getDeclaredField("startDate");
-                startDateField.setAccessible(true);
-                startDateField.set(entity, hearingDay);
-
-                var endDateField = HearingResultedDocument.class.getDeclaredField("endDate");
-                endDateField.setAccessible(true);
-                endDateField.set(entity, hearingDay);
-
-                return entity;
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to create test entity", e);
-            }
-        }
+        return new HearingResultedDocument(
+            new HearingResultedDocumentId(hearingUuid, hearingDay),
+            dummyDate,
+            dummyDate,
+            payload
+        );
     }
 
     @Test
     @DisplayName("getAllDocumentsByHearingId should return a mapped list of DTOs when documents are found")
     void getAllDocumentsByHearingId_shouldReturnMappedDtos_whenDocumentsFound() {
 
-        // Arrange UUID and Fake list - not sure how to do this
+        // Arrange UUID
         UUID hearingUuid = UUID.randomUUID();
-        LocalDate hearingDay_1 = LocalDate.parse("2023-10-30");
-        LocalDate hearingDay_2 = LocalDate.parse("2023-10-31");
+        LocalDate day1 = LocalDate.parse("2023-10-30");
+        LocalDate day2 = LocalDate.parse("2023-10-31");
 
-        // Create some fake entity objects.
-        HearingResultedDocument entity1 = TestUtils.createHearingDocumentEntity(hearingUuid, hearingDay_1, "payload1");
+        // Create fake entities
+        HearingResultedDocument entity1 = createEntity(hearingUuid, day1, "payload1");
+        HearingResultedDocument entity2 = createEntity(hearingUuid, day2, "payload2");
 
-        HearingResultedDocument entity2 = TestUtils.createHearingDocumentEntity(hearingUuid, hearingDay_2, "payload2");
+        when(mockRepository.findByHearingResultedDocumentId_HearingUuid(hearingUuid))
+            .thenReturn(List.of(entity1, entity2));
 
-        List<HearingResultedDocument> mockEntities = List.of(entity1, entity2);
-
-        when(mockRepository.findByHearingResultedDocumentId_HearingUuid(hearingUuid)).thenReturn(mockEntities);
-
-        // Act
+        // ACT
         List<HearingDocumentResponseDTO> results = service.getAllDocumentsByHearingId(hearingUuid);
 
-        // Assert
-        assertThat(results).isNotNull();
+        // ASSERT
         assertThat(results).hasSize(2);
+        assertThat(results.get(0).hearingDay()).isEqualTo(day1);
+        assertThat(results.get(0).payload()).isEqualTo("payload1");
 
         // Verify Mapping
         HearingDocumentResponseDTO resultDto1 = results.get(0);

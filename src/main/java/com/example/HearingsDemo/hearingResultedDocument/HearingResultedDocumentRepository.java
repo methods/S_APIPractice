@@ -1,15 +1,13 @@
 package com.example.HearingsDemo.hearingResultedDocument;
 
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
 
-@Repository
-public interface HearingResultedDocumentRepository  extends JpaRepository<HearingResultedDocument,
+public interface HearingResultedDocumentRepository  extends Repository<HearingResultedDocument,
     HearingResultedDocumentId> {
 
     /**
@@ -18,7 +16,6 @@ public interface HearingResultedDocumentRepository  extends JpaRepository<Hearin
      * @param hearingUuid The UUID of the hearing to search for.
      * @return A list of all documents for all days of that hearing.
      */
-
     List<HearingResultedDocument> findByHearingResultedDocumentId_HearingUuid(UUID hearingUuid);
 
 }

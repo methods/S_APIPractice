@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Immutable;
@@ -15,7 +17,9 @@ import java.util.Objects;
 @Immutable
 @Table(name = "hearing_resulted_document")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // <-- Only "Family" (classes in the same package or subclasses) can
+// see/use it.
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class HearingResultedDocument {
 
     // --- Composite key ----
