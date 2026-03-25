@@ -41,7 +41,7 @@ class HearingDocumentRepositoryTest {
             "{\"result\": \"Success\"}");
 
         // ACT
-        List<HearingResultedDocument> results = repository.findByHearingResultedDocumentId_HearingUuid(hearingUuid);
+        List<HearingResultedDocument> results = repository.findAllByHearingResultedDocumentId_HearingUuid(hearingUuid);
 
         // ASSERT
         assertThat(results).hasSize(1);

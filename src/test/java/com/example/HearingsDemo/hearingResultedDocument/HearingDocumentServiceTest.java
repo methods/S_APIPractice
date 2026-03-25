@@ -51,7 +51,7 @@ class HearingDocumentServiceTest {
         HearingResultedDocument entity1 = createEntity(hearingUuid, day1, "payload1");
         HearingResultedDocument entity2 = createEntity(hearingUuid, day2, "payload2");
 
-        when(mockRepository.findByHearingResultedDocumentId_HearingUuid(hearingUuid))
+        when(mockRepository.findAllByHearingResultedDocumentId_HearingUuid(hearingUuid))
             .thenReturn(List.of(entity1, entity2));
 
         // ACT
@@ -80,7 +80,7 @@ class HearingDocumentServiceTest {
 
         UUID hearingUuid = UUID.randomUUID();
 
-        when(mockRepository.findByHearingResultedDocumentId_HearingUuid(hearingUuid)).thenReturn(Collections.emptyList());
+        when(mockRepository.findAllByHearingResultedDocumentId_HearingUuid(hearingUuid)).thenReturn(Collections.emptyList());
 
         // ACT
         List<HearingDocumentResponseDTO> results = service.getAllDocumentsByHearingId(hearingUuid);

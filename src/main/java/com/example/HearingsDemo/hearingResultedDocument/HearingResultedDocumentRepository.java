@@ -16,6 +16,6 @@ public interface HearingResultedDocumentRepository  extends Repository<HearingRe
      * @param hearingUuid The UUID of the hearing to search for.
      * @return A list of all documents for all days of that hearing.
      */
-    List<HearingResultedDocument> findByHearingResultedDocumentId_HearingUuid(UUID hearingUuid);
+    List<HearingResultedDocument> findAllByHearingResultedDocumentId_HearingUuid(UUID hearingUuid);
 
 }

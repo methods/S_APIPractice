@@ -14,7 +14,14 @@ public record HearingDocumentCollectionResponseDTO(
 
     @Schema(
         description = "List of documents found for the hearing",
-        example = "{\"resultCode\": \"GUILTY\", \"notes\": \"Defendant pleaded guilty to all charges.\"}"
+        example = """
+            [
+              {
+                "hearingDay": "2023-10-31",
+                "payload": "{\\"result\\": \\"Success\\"}"
+              }
+            ]
+            """
     )
     List<HearingDocumentResponseDTO> data,
 

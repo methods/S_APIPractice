@@ -1,5 +1,6 @@
 package com.example.HearingsDemo.hearingResultedDocument;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-@Tag(name = "HearingResultsDocument Validation", description = "Endpoints for verifying HearingResultsDocument data integrity")
+@Tag(name = "Hearing Results Viewstore", description = "Query endpoints for retrieving processed hearing result documents.")
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/hearings")
 public class HearingResultedDocumentController {
 
     private final HearingResultedDocumentService service;
@@ -21,7 +22,11 @@ public class HearingResultedDocumentController {
         this.service = service;
     }
 
-    @GetMapping("/hearings/{hearingId}")
+    @Operation(
+        summary = "Get all result documents for a hearing",
+        description = "Retrieves a collection of all result payloads associated with a specific hearing UUID, organized by hearing day."
+    )
+    @GetMapping("/{hearingId}")
     public ResponseEntity<HearingDocumentCollectionResponseDTO> getDocuments(
         @PathVariable UUID hearingId
     ){

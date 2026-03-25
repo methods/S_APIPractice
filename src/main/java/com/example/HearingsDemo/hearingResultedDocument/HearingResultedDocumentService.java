@@ -27,7 +27,7 @@ public class HearingResultedDocumentService {
 
         // 1. Call the repository to get the database entities
         List<HearingResultedDocument> documentsEntities =
-            repository.findByHearingResultedDocumentId_HearingUuid(hearingUuid);
+            repository.findAllByHearingResultedDocumentId_HearingUuid(hearingUuid);
 
         // 2. Use a Java Stream to map each entity to a DTO
         return documentsEntities.stream()
