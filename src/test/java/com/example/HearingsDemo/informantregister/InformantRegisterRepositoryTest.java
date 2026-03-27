@@ -44,6 +44,8 @@ class InformantRegisterRepositoryTest {
         UUID fileId = UUID.randomUUID();
         UUID hearingId = UUID.randomUUID();
         LocalDate today = LocalDate.now();
+        // Truncate to MICROS because that is what Postgres supports.
+        // Java: 10:30:00.123456789 -> becomes -> 10:30:00.123456
         LocalDateTime now = LocalDateTime.now();
         String payload = "{\"data\": \"sample payload\"}";
         String status = "PROCESSED";
@@ -112,7 +114,7 @@ class InformantRegisterRepositoryTest {
     @Test
     @DisplayName("Should handle NULL values for optional fields in InformantRegister")
     void shouldFindInformantRegister_whenOptionalFieldsAreNull() {
-        // Arrange: Only provide the MANDATORY fields (nullable=false in Liquibase)
+        // Arrange: Only provide the mandatory (non-nullable) fields
         UUID id = UUID.randomUUID();
         UUID prosecutionAuthorityId = UUID.randomUUID();
         LocalDate registerDate = LocalDate.now();

@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record InformantRegisterDTO(
-    @Schema(description = "Primary key identifier", example = "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6")
+    @Schema(description = "Primary key identifier", example = "550e8400-e29b-41d4-a716-446655440000")
     UUID id,
 
-    @Schema(description = "The ID of the prosecution authority", example = "550e8400-e29b-41d4-a716-446655440000")
+    @Schema(description = "The ID of the prosecution authority", example = "7c9e6679-7425-40de-944b-e07fc1f90ae7")
     UUID prosecutionAuthorityId,
 
     @Schema(description = "Code for the prosecution authority", example = "PA-001")

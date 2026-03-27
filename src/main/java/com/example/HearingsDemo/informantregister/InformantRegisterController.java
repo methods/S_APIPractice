@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@Tag(name = "Informant Register viewstore", description = "Endpoints for querying the Informant Read-Model")
+@Tag(name = "Informant Register Viewstore", description = "Endpoints for querying the Informant Read-Model")
 @RestController
 @RequestMapping("/api/v1/informant-reporting")
 public class InformantRegisterController {

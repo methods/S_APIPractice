@@ -82,7 +82,6 @@ public class InformantRegisterControllerTest {
     @Test
     @DisplayName("GET /api/v1/informant-reporting/{id} - Should return 404 Not Found when the service throws ResourceNotFoundException")
     void shouldReturn404_whenNotFound() throws Exception {
-        // Please check my understanding- the repository tests don't use throws exception, bit the others do?
         //Arrange
         UUID id = UUID.randomUUID();
 
