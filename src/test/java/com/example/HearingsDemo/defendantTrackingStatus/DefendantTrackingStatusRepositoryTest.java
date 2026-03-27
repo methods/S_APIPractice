@@ -50,7 +50,7 @@ class DefendantTrackingStatusRepositoryTest {
             );
 
         // Act
-        Optional<DefendantTrackingStatus> results = repository. findById(offenceId);
+        Optional<DefendantTrackingStatus> results = repository.findById(offenceId);
 
         // ASSERT
         assertThat(results).isPresent();
@@ -79,7 +79,7 @@ class DefendantTrackingStatusRepositoryTest {
         );
 
         // Act
-        Optional<DefendantTrackingStatus> results = repository. findById(offenceId);
+        Optional<DefendantTrackingStatus> results = repository.findById(offenceId);
         // ASSERT
         assertThat(results).isPresent();
         DefendantTrackingStatus status = results.get(); // extract once for readability

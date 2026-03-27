@@ -63,7 +63,9 @@ public class DefendantTrackingStatusControllerTest {
 
     // --- Empty Case Test ---
     @Test
-    @DisplayName("GET /api/v1/offences/{offenceId}/tracking-status should return 404 ResourceNotFoundException when no documents are found")
+    @DisplayName("GET /api/v1/offences/{offenceId}/tracking-status should return 404 ResourceNotFoundException when " +
+        "tracking status is not found" +
+        " found")
     void shouldReturnResourceNotFoundErrorWithCustomMessageWhenNotFound() throws Exception {
         //Arrange
         UUID offenceId = UUID.randomUUID();

@@ -20,11 +20,11 @@ public class DefendantTrackingStatusService {
      * Retrieves the tracking status associated with a specific offence.
      * Returns the DTO directly or throws ResourceNotFoundException.
      */
-    public DefendantTrackingStatusDTO getDefendantTrackingStatusByOffenceId(UUID offenseId) {
+    public DefendantTrackingStatusDTO getDefendantTrackingStatusByOffenceId(UUID offenceId) {
 
         // 1. Find the entity OR throw the exception immediately
-        DefendantTrackingStatus statusEntity = repository.findById(offenseId)
-            .orElseThrow(() -> new ResourceNotFoundException("Tracking status not found for offence: " + offenseId));
+        DefendantTrackingStatus statusEntity = repository.findById(offenceId)
+            .orElseThrow(() -> new ResourceNotFoundException("Tracking status not found for offence: " + offenceId));
 
         // Map the found entity to the DTO and return it
         return mapToDTO(statusEntity);
