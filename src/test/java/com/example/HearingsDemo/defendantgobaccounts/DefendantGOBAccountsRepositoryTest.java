@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -158,6 +159,63 @@ public class DefendantGOBAccountsRepositoryTest {
         Optional<DefendantGOBAccount> result = repository.findById(compositeKey);
 
         assertThat(result).isEmpty();
+    }
+
+    // TODO
+    // =======================================================
+    // Index lookup
+    // The URL: GET /api/v1/defendant-gob-accounts?masterDefendantId={uuid}&hearingId={uuid}
+    // The Why: Business This returns all accounts belonging to the given defendant and hearingId.
+    // The Method: List<DefendantGobAccount> FindALLByMasterIdAndHearingId(UUID masterDefendantId, UUID hearingId)
+    // =======================================================
+
+
+    @Test
+    @DisplayName("Should find all accounts belonging to a specific Master Defendant and Hearing ID")
+    void shouldFindAllAccountsByMasterIdAndHearingId() {
+
+        // Arrange
+        UUID masterId = UUID.randomUUID();
+        UUID hearingId = UUID.randomUUID();
+
+        UUID correlationId1 = UUID.randomUUID();
+        UUID correlationId2 = UUID.randomUUID();
+
+        String sql = """
+        INSERT INTO defendant_gob_accounts (
+            master_defendant_id,
+            account_correlation_id,
+            hearing_id,
+            account_number,
+            case_references,
+            created_time,
+            updated_time
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        // Row 1
+        jdbcTemplate.update(sql, masterId, correlationId1, hearingId, "ACC-001", "Case A", LocalDateTime.now(), LocalDateTime.now());
+        // Row 2
+        jdbcTemplate.update(sql, masterId, correlationId2, hearingId, "ACC-002", "Case B", LocalDateTime.now(), LocalDateTime.now());
+
+        // Act
+        List<DefendantGOBAccount> results = repository.findAllById_MasterIdAndHearingId(masterId, hearingId);
+
+        // Assert
+        assertThat(results).hasSize(2);
+
+        // verify the data belongs to the requested IDs
+        assertThat(results).allSatisfy(account -> {
+            assertThat(account.getMasterDefendantId()).isEqualTo(masterId);
+            assertThat(account.getHearingId()).isEqualTo(hearingId);
+        });
+
+        // Verify individual correlationId's exist in the collection
+        assertThat(results).extracting(DefendantGOBAccount::getAccountCorrelationId)
+            .containsExactlyInAnyOrder(correlationId1, correlationId2);
+        // Verify individual account numbers exist in the collection
+        assertThat(results).extracting(DefendantGOBAccount::getAccountNumber)
+            .containsExactlyInAnyOrder("ACC-001", "ACC-002");
     }
 
     // TODO
