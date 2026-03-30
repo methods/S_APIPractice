@@ -12,7 +12,7 @@ public class NcesEmailNotificationService {
 
     private final NcesEmailNotificationRepository repository;
 
-    public  NcesEmailNotificationService(NcesEmailNotificationRepository repository) {
+    public NcesEmailNotificationService( NcesEmailNotificationRepository repository) {
         this.repository = repository;
     }
 

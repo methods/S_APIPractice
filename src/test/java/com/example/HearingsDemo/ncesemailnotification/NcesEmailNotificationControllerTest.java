@@ -39,7 +39,7 @@ public class NcesEmailNotificationControllerTest {
             UUID.randomUUID(),
             UUID.randomUUID(),
             UUID.randomUUID(),
-            "Test Recepient",
+            "Test Recipient",
             "Test Subject"
         );
 

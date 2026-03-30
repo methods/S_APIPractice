@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 
-@Tag(name ="...", description = "...")
+@Tag(
+    name ="NCES Email Notification Viewstore",
+    description = "Endpoints for querying the NCES Email Notification Read-Model")
 @RestController
 @RequestMapping("/api/v1/nces-notifications")
 public class NcesEmailNotificationController {
@@ -23,8 +25,8 @@ public class NcesEmailNotificationController {
     }
 
     @Operation(
-        summary = "...",
-        description = "..."
+        summary = "Retrieve a notification record",
+        description = "Fetches the full details of a specific notification using its UUID"
     )
     @GetMapping("/{id}")
     public ResponseEntity<NcesEmailNotificationDTO> getNotificationById(

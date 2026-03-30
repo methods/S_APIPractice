@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class NcesEmailNotificationTest {
+class NcesEmailNotificationRepositoryTest {
 
     @Autowired
     private NcesEmailNotificationRepository repository;
@@ -32,7 +32,7 @@ class NcesEmailNotificationTest {
 
     @Test
     @DisplayName("Should find NcesEmailNotification by ID with all fields populated")
-    void shouldFindTheEmailbyId() {
+    void shouldFindTheEmailById() {
         // Arrange
         UUID id = UUID.randomUUID();
         UUID materialId = UUID.randomUUID();
@@ -130,7 +130,6 @@ class NcesEmailNotificationTest {
         Optional<NcesEmailNotification> result = repository.findById(UUID.randomUUID());
 
         assertThat(result).isEmpty();
-        assertThat(result).isNotPresent();
     }
 
 }
