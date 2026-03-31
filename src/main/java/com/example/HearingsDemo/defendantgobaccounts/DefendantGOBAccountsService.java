@@ -4,6 +4,7 @@ import com.example.HearingsDemo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,6 +32,23 @@ public class DefendantGOBAccountsService {
             .orElseThrow(() -> new ResourceNotFoundException("Account not found for the given IDs"));
 
         return mapToDTO(entity);
+    }
+
+    /**
+     * Retrieves all accounts associated with a specific defendant and hearing.
+     *
+     * @param masterDefendantId The unique ID of the defendant
+     * @param hearingId The ID of the hearing
+     * @return A List of DTOs. Returns an empty list if no matches are found.
+     */
+
+    public List<DefendantGOBAccountDTO> getAllAccountsForHearing(UUID masterDefendantId,
+                                                                                      UUID hearingId) {
+        List<DefendantGOBAccount> accountEntities =
+            repository.findAllById_MasterDefendantIdAndHearingId(masterDefendantId, hearingId);
+
+        return accountEntities.stream().map(this::mapToDTO).toList();
+
     }
 
     // Mapping Helper method

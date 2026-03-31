@@ -10,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,12 +31,11 @@ class DefendantGOBAccountsServiceTest {
     // ========================================================================
     // A simple utility method for creating test DefendantGOBAccounts entities
     // ========================================================================
-    private DefendantGOBAccount createEntity(UUID masterId, UUID correlationId) {
+    private DefendantGOBAccount createEntity(UUID masterId, UUID correlationId, UUID hearingId) {
 
         // Create the composit key
         DefendantGOBAccountId id = new DefendantGOBAccountId(masterId, correlationId);
 
-        UUID hearingId = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
 
         return new DefendantGOBAccount(
@@ -57,11 +58,12 @@ class DefendantGOBAccountsServiceTest {
         // Arrange
         UUID masterId = UUID.randomUUID();
         UUID correlationId = UUID.randomUUID();
+        UUID hearingId = UUID.randomUUID();
 
         DefendantGOBAccountId compositeKey = new DefendantGOBAccountId(masterId, correlationId);
 
         // Create fake entities
-        DefendantGOBAccount mockEntity = createEntity(masterId, correlationId);
+        DefendantGOBAccount mockEntity = createEntity(masterId, correlationId, hearingId);
 
         when(repository.findById(compositeKey)).thenReturn(Optional.of(mockEntity));
 
@@ -90,5 +92,64 @@ class DefendantGOBAccountsServiceTest {
             .isInstanceOf(ResourceNotFoundException.class)
             .hasMessage("Account not found for the given IDs");
 
+    }
+
+
+    // =======================================================
+    // Index Collections lookup
+    // =======================================================
+
+    @Test
+    @DisplayName("getAllAccountsForHearing should return a mapped list of account DTOs when found")
+    void getAllAccountsByMasterIdAndHearingId_shouldReturnMappedDtos_whenAccountsFound() {
+
+        // Arrange
+        UUID masterId = UUID.randomUUID();
+        UUID hearingId = UUID.randomUUID();
+
+        UUID correlationId1 = UUID.randomUUID();
+        UUID correlationId2 = UUID.randomUUID();
+
+        // Create fake Entities
+        DefendantGOBAccount entity1 = createEntity(masterId, correlationId1, hearingId);
+        DefendantGOBAccount entity2 = createEntity(masterId, correlationId2, hearingId);
+
+        when(repository.findAllById_MasterDefendantIdAndHearingId(masterId, hearingId))
+            .thenReturn(List.of(entity1, entity2));
+
+        // Act
+        List<DefendantGOBAccountDTO> results = service.getAllAccountsForHearing(masterId,
+            hearingId);
+
+        // Assert
+        assertThat(results)
+            .hasSize(2)
+            .allSatisfy(dto -> {
+                assertThat(dto.masterDefendantId()).isEqualTo(masterId);
+                assertThat(dto.hearingId()).isEqualTo(hearingId);
+                assertThat(dto.accountNumber()).isEqualTo("0765");
+            });
+
+        // Check that the two unique correlation IDs are present in the list
+        assertThat(results)
+            .extracting(DefendantGOBAccountDTO::accountCorrelationId)
+            .containsExactlyInAnyOrder(correlationId1, correlationId2);
+    }
+
+    @Test
+    @DisplayName("getAllAccountsForHearing should return an empty list when no documents are found")
+    void getAllAccountsByMasterIdAndHearingId_shouldReturnEmptyList_whenNoAccountsFound() {
+        // Arrange
+        UUID masterId = UUID.randomUUID();
+        UUID hearingId = UUID.randomUUID();
+
+        when(repository.findAllById_MasterDefendantIdAndHearingId(masterId, hearingId)).thenReturn(Collections.emptyList());
+
+        // Act
+        List<DefendantGOBAccountDTO> results = service.getAllAccountsForHearing(masterId,
+            hearingId);
+
+        // Assert
+        assertThat(results).isEmpty();
     }
 }
