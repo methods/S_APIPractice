@@ -28,8 +28,8 @@ public class DefendantGOBAccountsRepositoryTest {
 
     // ===============================
     // FindByID single lookup - Retrieves one specific, unique account record.
-    // The URL: GET /api/v1/defendant-gob-accounts/{masterDefendantId}/{accountCorrelationId}
-    // The Method: Optional<DefendantGobAccount> findById(DefendantGobAccountId id)
+    // The URL: GET /api/v1/defendant-gob-accounts/{masterDefendantId}/correlations/{accountCorrelationId}
+    // The Method: Optional<DefendantGOBAccount> findById(DefendantGOBAccountId id)
     // ===============================
 
     @Test
@@ -81,7 +81,7 @@ public class DefendantGOBAccountsRepositoryTest {
             assertThat(account.getAccountNumber()).isEqualTo("0765");
 
             // Timestamp check
-            assertThat(account.getCreatedTime().toString()).startsWith(now.toString().substring(0, 19));
+            assertThat(account.getCreatedTime()).isEqualTo(now);
         });
     }
 
@@ -161,17 +161,16 @@ public class DefendantGOBAccountsRepositoryTest {
         assertThat(result).isEmpty();
     }
 
-    // TODO
     // =======================================================
     // Index lookup
     // The URL: GET /api/v1/defendant-gob-accounts?masterDefendantId={uuid}&hearingId={uuid}
     // The Why: Business This returns all accounts belonging to the given defendant and hearingId.
-    // The Method: List<DefendantGobAccount> FindALLByMasterIdAndHearingId(UUID masterDefendantId, UUID hearingId)
+    // The Method: List<DefendantGOBAccount> findAllByMasterIdAndHearingId(UUID masterDefendantId, UUID hearingId)
     // =======================================================
 
 
     @Test
-    @DisplayName("Should find all accounts belonging to a specific Master Defendant and Hearing ID")
+    @DisplayName("findAllByMasterIdAndHearingId should find all accounts belonging to a specific Master Defendant and Hearing ID")
     void shouldFindAllAccountsByMasterIdAndHearingId() {
 
         // Arrange
@@ -199,7 +198,7 @@ public class DefendantGOBAccountsRepositoryTest {
         jdbcTemplate.update(sql, masterId, correlationId2, hearingId, "ACC-002", "Case B", LocalDateTime.now(), LocalDateTime.now());
 
         // Act
-        List<DefendantGOBAccount> results = repository.findAllById_MasterIdAndHearingId(masterId, hearingId);
+        List<DefendantGOBAccount> results = repository.findAllById_MasterDefendantIdAndHearingId(masterId, hearingId);
 
         // Assert
         assertThat(results).hasSize(2);
@@ -218,13 +217,17 @@ public class DefendantGOBAccountsRepositoryTest {
             .containsExactlyInAnyOrder("ACC-001", "ACC-002");
     }
 
-    // TODO
-    // =======================================================
-    // FindALLByID_findByMasterDefendantId collections lookup
-    // The URL: GET /api/v1/defendant-gob-accounts?masterDefendantId={uuid}
-    // Using the Index URL version: GET /api/v1/defendant-gob-accounts?masterDefendantId={uuid}&hearingId={uuid}
-    // The Why: This returns all accounts belonging to one defendant.
-    // The Method: List<DefendantGobAccount> findAllByMasterDefendantId(UUID masterDefendantId)
-    // =======================================================
+    @Test
+    @DisplayName("findAllByMasterIdAndHearingId should return an empty list when no matching records exist")
+    void shouldReturnEmptyList_whenNoRecordsMatchCriteria() {
+
+        // Arrange
+        UUID masterId = UUID.randomUUID();
+        UUID hearingId = UUID.randomUUID();
+
+        List<DefendantGOBAccount> results = repository.findAllById_MasterDefendantIdAndHearingId(masterId, hearingId);
+
+        assertThat(results).isEmpty();
+    }
 
 }

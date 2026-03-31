@@ -19,10 +19,11 @@ public interface DefendantGOBAccountsRepository extends Repository<DefendantGOBA
 
     /**
      * Finds all accounts linked to a specific defendant within a specific hearing.
-     * @param masterId  The unique identifier for the defendant
+     * @param masterDefendantId  The unique identifier for the defendant
      * @param hearingId The unique identifier for the hearing
      * @return A list of matching DefendantGOBAccount records
      */
-    List<DefendantGOBAccount> findAllById_MasterIdAndHearingId(UUID masterId, UUID hearingId);
+    List<DefendantGOBAccount> findAllById_MasterDefendantIdAndHearingId(UUID masterDefendantId, UUID hearingId);
+
 }
 
