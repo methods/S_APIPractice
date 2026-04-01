@@ -29,7 +29,8 @@ public class DefendantGOBAccountsService {
         DefendantGOBAccountId compositeKey = new DefendantGOBAccountId(masterDefendantId, accountCorrelationId);
 
         DefendantGOBAccount entity = repository.findById(compositeKey)
-            .orElseThrow(() -> new ResourceNotFoundException("Account not found for the given IDs"));
+            .orElseThrow(() -> new ResourceNotFoundException("Account not found for masterDefendantId=" + masterDefendantId
+                + ", accountCorrelationId=" + accountCorrelationId));
 
         return mapToDTO(entity);
     }
@@ -42,8 +43,7 @@ public class DefendantGOBAccountsService {
      * @return A List of DTOs. Returns an empty list if no matches are found.
      */
 
-    public List<DefendantGOBAccountDTO> getAllAccountsForHearing(UUID masterDefendantId,
-                                                                                      UUID hearingId) {
+    public List<DefendantGOBAccountDTO> getAllAccountsForHearing(UUID masterDefendantId, UUID hearingId) {
         List<DefendantGOBAccount> accountEntities =
             repository.findAllById_MasterDefendantIdAndHearingId(masterDefendantId, hearingId);
 

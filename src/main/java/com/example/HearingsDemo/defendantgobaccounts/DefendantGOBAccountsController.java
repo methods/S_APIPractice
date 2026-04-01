@@ -31,7 +31,7 @@ public class DefendantGOBAccountsController {
         return ResponseEntity.ok(accountDto);
     }
 
-    @Operation(summary = "Get all associated account accounts", description = "Retrieves by masterDefendantId and " +
+    @Operation(summary = "Get all associated accounts", description = "Retrieves by masterDefendantId and " +
         "hearingId")
     @GetMapping
     public ResponseEntity<List<DefendantGOBAccountDTO>> getAccounts(

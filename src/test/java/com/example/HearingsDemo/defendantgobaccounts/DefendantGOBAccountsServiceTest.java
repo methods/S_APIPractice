@@ -33,7 +33,7 @@ class DefendantGOBAccountsServiceTest {
     // ========================================================================
     private DefendantGOBAccount createEntity(UUID masterId, UUID correlationId, UUID hearingId) {
 
-        // Create the composit key
+        // Create the composite key
         DefendantGOBAccountId id = new DefendantGOBAccountId(masterId, correlationId);
 
         LocalDateTime now = LocalDateTime.now();
@@ -77,7 +77,7 @@ class DefendantGOBAccountsServiceTest {
     }
 
     @Test
-    @DisplayName("getAccountById should throw ResourceNotFoundException when no account is found")
+    @DisplayName("getAccountByIds should throw ResourceNotFoundException when no account is found")
     void getAccountById_shouldThrowException_whenNoAccountIsFound() {
 
         // Arrange
@@ -90,7 +90,8 @@ class DefendantGOBAccountsServiceTest {
         // Act & Assert (We do them together for exceptions)
         assertThatThrownBy(() -> service.getAccountByIds(masterId, correlationId))
             .isInstanceOf(ResourceNotFoundException.class)
-            .hasMessage("Account not found for the given IDs");
+            .hasMessage("Account not found for masterDefendantId=" + masterId
+                + ", accountCorrelationId=" + correlationId);
 
     }
 
