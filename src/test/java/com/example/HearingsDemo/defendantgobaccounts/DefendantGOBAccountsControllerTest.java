@@ -11,9 +11,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -35,7 +37,8 @@ public class DefendantGOBAccountsControllerTest {
         UUID masterDefendantId = UUID.randomUUID();
         UUID accountCorrelationId = UUID.randomUUID();
         UUID hearingId = UUID.randomUUID();
-        LocalDateTime accountRequestTime = LocalDateTime.now();
+        // Hardcode the time to a specific value
+        LocalDateTime accountRequestTime = LocalDateTime.of(2025, 12, 25, 10, 0, 0);
 
         // Create  mock dto
         DefendantGOBAccountDTO mockDto = new DefendantGOBAccountDTO(
@@ -59,7 +62,7 @@ public class DefendantGOBAccountsControllerTest {
             .andExpect(jsonPath("$.masterDefendantId").value(masterDefendantId.toString()))
             .andExpect(jsonPath("$.accountCorrelationId").value(accountCorrelationId.toString()))
             .andExpect(jsonPath("$.hearingId").value(hearingId.toString()))
-            .andExpect(jsonPath("$.accountRequestTime").value(accountRequestTime.toString()))
+            .andExpect(jsonPath("$.accountRequestTime").value("2025-12-25T10:00:00"))
 
             // String values
             .andExpect(jsonPath("$.accountNumber").value(mockDto.accountNumber()))
@@ -79,9 +82,11 @@ public class DefendantGOBAccountsControllerTest {
                 "Account not found for the given IDs"));
 
         // Act & Assert
-        mockMvc.perform(get("/api/v1/defendant-gob-accounts//{masterDefendantId}/correlations/{accountCorrelationId}",
+        mockMvc.perform(get("/api/v1/defendant-gob-accounts/{masterDefendantId}/correlations/{accountCorrelationId}",
                 masterDefendantId, accountCorrelationId))
             .andExpect(status().isNotFound());
+        verify(service).getAccountByIds(masterDefendantId, accountCorrelationId);
+
 
     }
 
