@@ -32,7 +32,7 @@ public class DefendantGOBAccountsControllerTest {
     @Test
     @DisplayName("GET /api/v1/defendant-gob-accounts/{masterDefendantId}/correlations/{accountCorrelationId} - Should" +
         " return 200 OK and JSON representation when the account exists")
-    void shouldReturn200AndDto_whenAccountExists() throws Exception {
+    void shouldReturn200AndDtoWhenAccountExists() throws Exception {
         // Arrange
         UUID masterDefendantId = UUID.randomUUID();
         UUID accountCorrelationId = UUID.randomUUID();
@@ -72,7 +72,7 @@ public class DefendantGOBAccountsControllerTest {
 
     @Test
     @DisplayName("GET /api/v1/defendant-gob-accounts//{masterDefendantId}/correlations/{accountCorrelationId} - Should return 404 Not Found when the service throws ResourceNotFoundException")
-    void shouldReturn404_whenNotFound() throws Exception {
+    void shouldReturn404WhenNotFound() throws Exception {
         // Arrange
         UUID masterDefendantId = UUID.randomUUID();
         UUID accountCorrelationId = UUID.randomUUID();

@@ -22,7 +22,7 @@ public class DefendantGOBAccountsController {
 
     @Operation(summary = "Get associated account details", description = "Retrieves account by IDs")
     @GetMapping("/{masterDefendantId}/correlations/{accountCorrelationId}")
-    public ResponseEntity<DefendantGOBAccountDTO> getAccountById(
+    public ResponseEntity<DefendantGOBAccountDTO> getAccountByMasterAndCorrelationId(
         @PathVariable UUID masterDefendantId,
         @PathVariable UUID accountCorrelationId
     ) {
@@ -34,7 +34,7 @@ public class DefendantGOBAccountsController {
     @Operation(summary = "Get all associated accounts", description = "Retrieves by masterDefendantId and " +
         "hearingId")
     @GetMapping
-    public ResponseEntity<List<DefendantGOBAccountDTO>> getAccounts(
+    public ResponseEntity<List<DefendantGOBAccountDTO>> getAllAccountsByMasterAndHearingId(
         @RequestParam UUID masterDefendantId,
         @RequestParam UUID hearingId
     ) {
