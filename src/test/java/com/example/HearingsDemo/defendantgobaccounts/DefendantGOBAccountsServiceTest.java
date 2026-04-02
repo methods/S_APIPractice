@@ -54,7 +54,7 @@ class DefendantGOBAccountsServiceTest {
     // ======================================================================
     @Test
     @DisplayName("FindById should return mapped DTO when record is found")
-    void shouldReturnDto_whenRecordExists() {
+    void shouldReturnDtoWhenRecordExists() {
         // Arrange
         UUID masterId = UUID.randomUUID();
         UUID correlationId = UUID.randomUUID();
@@ -78,7 +78,7 @@ class DefendantGOBAccountsServiceTest {
 
     @Test
     @DisplayName("getAccountByIds should throw ResourceNotFoundException when no account is found")
-    void getAccountById_shouldThrowException_whenNoAccountIsFound() {
+    void getAccountByIdShouldThrowExceptionWhenNoAccountIsFound() {
 
         // Arrange
         UUID masterId = UUID.randomUUID();
@@ -102,7 +102,7 @@ class DefendantGOBAccountsServiceTest {
 
     @Test
     @DisplayName("getAllAccountsForHearing should return a mapped list of account DTOs when found")
-    void getAllAccountsByMasterIdAndHearingId_shouldReturnMappedDtos_whenAccountsFound() {
+    void getAllAccountsByMasterIdAndHearingIdShouldReturnMappedDtosWhenAccountsFound() {
 
         // Arrange
         UUID masterId = UUID.randomUUID();
@@ -139,7 +139,7 @@ class DefendantGOBAccountsServiceTest {
 
     @Test
     @DisplayName("getAllAccountsForHearing should return an empty list when no documents are found")
-    void getAllAccountsByMasterIdAndHearingId_shouldReturnEmptyList_whenNoAccountsFound() {
+    void getAllAccountsByMasterIdAndHearingIdShouldReturnEmptyListWhenNoAccountsFound() {
         // Arrange
         UUID masterId = UUID.randomUUID();
         UUID hearingId = UUID.randomUUID();

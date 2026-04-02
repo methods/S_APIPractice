@@ -87,7 +87,7 @@ public class DefendantGOBAccountsRepositoryTest {
 
     @Test
     @DisplayName("Should handle NULL values for optional fields in DefendantGOBAccount")
-    void shouldFindDefendantGOBAccount_whenOptionalFieldsAreNull() {
+    void shouldFindDefendantGOBAccountWhenOptionalFieldsAreNull() {
         // Arrange:
         UUID masterId = UUID.randomUUID();
         UUID correlationId = UUID.randomUUID();
@@ -147,7 +147,7 @@ public class DefendantGOBAccountsRepositoryTest {
 
     @Test
     @DisplayName("findById should return an empty Optional when the Composite Key Id is not in the database")
-    void shouldReturnEmptyOptional_whenIdDoesNotExist() {
+    void shouldReturnEmptyOptionalWhenIdDoesNotExist() {
 
         // Arrange
         UUID masterId = UUID.randomUUID();
@@ -219,7 +219,7 @@ public class DefendantGOBAccountsRepositoryTest {
 
     @Test
     @DisplayName("findAllByMasterIdAndHearingId should return an empty list when no matching records exist")
-    void shouldReturnEmptyList_whenNoRecordsMatchCriteria() {
+    void shouldReturnEmptyListWhenNoRecordsMatchCriteria() {
 
         // Arrange
         UUID masterId = UUID.randomUUID();
