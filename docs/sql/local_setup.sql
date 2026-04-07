@@ -2,7 +2,8 @@
   Spring Boot / Database-First Best Practice (Read-Side CQRS)
 
   - This file defines the local database schema for the Hearings Demo.
-  - It mirrors the production schemas defined in the project's Liquibase changesets.
+  - It mirrors the production schemas defined in the source (see: https://github
+  .com/hmcts/cpp-context-results/tree/main/results-viewstore/results-viewstore-liquibase/src/main/resources/liquibase/results-view-store-db-changesets) project's Liquibase changesets.
   - Since this application follows a Read-only CQRS pattern, these tables are
     marked as @Immutable in Java and are populated by external processes.
   - Local development relies on this mirror to ensure JPA mappings and
@@ -46,10 +47,12 @@ CREATE TABLE IF NOT EXISTS informant_register (
 
 -- 3. Hearing_Resulted_Document
 CREATE TABLE IF NOT EXISTS hearing_resulted_document (
-    hearing_id UUID PRIMARY KEY,
+    hearing_id UUID NOT NULL,
+    hearing_day DATE NOT NULL,
     start_date DATE,
     end_date DATE,
-    payload TEXT
+    payload TEXT,
+    PRIMARY KEY (hearing_id, hearing_day)
 );
 
 
