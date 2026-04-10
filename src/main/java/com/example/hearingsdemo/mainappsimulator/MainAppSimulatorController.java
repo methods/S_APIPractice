@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
@@ -50,5 +51,27 @@ public class MainAppSimulatorController {
         // Return the generated correlation ID so Postman can use it
         return correlationId.toString();
 
+    }
+
+    @PostMapping("/hearings/{hearingId}")
+    public String simulateCreateHearing(
+        @PathVariable UUID hearingId,
+        @RequestBody Map<String, String> requestBody ) throws InterruptedException {
+
+        LocalDate hearingDay = LocalDate.now();
+        String payload = requestBody.get("payload");
+
+        String sql = """
+            INSERT INTO hearing_resulted_document
+            (hearing_id, hearing_day, start_date, end_date, payload) VALUES (?, ?, ?, ?, ?)
+            """;
+
+        jdbcTemplate.update(sql,
+            hearingId, hearingDay, LocalDate.now(), LocalDate.now(), payload
+            );
+
+        Thread.sleep(1000);
+
+        return hearingId.toString();
     }
 }
