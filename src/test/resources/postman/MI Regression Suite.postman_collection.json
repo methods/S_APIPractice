@@ -1,0 +1,270 @@
+{
+  "info": {
+    "_postman_id": "5ceb9a30-77fd-49c8-9fb2-dc95b23cfb4c",
+    "name": "MI Regression Suite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53815132"
+  },
+  "item": [
+    {
+      "name": "Defendant GOB Accounts",
+      "item": [
+        {
+          "name": "Create a new defendant_gob_account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Simulator returned a Correlation ID\", function () {",
+                  "",
+                  "    pm.response.to.have.status(200);",
+                  "",
+                  "    // Save the raw test response (the UUID) into a Postman environment variable.  ",
+                  "    pm.environment.set(\"account_correlation_id\", pm.response.text());",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hearingId\": \"987e6543-e21b-12d3-a456-426614174000\",\n  \"accountNumber\": \"TEST-AUTO-001\",\n  \"caseReferences\": \"REF-AUTO-999\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{simulator_url}}/defendants/123e4567-e89b-12d3-a456-426614174000/gob-accounts",
+              "host": [
+                "{{simulator_url}}"
+              ],
+              "path": [
+                "defendants",
+                "123e4567-e89b-12d3-a456-426614174000",
+                "gob-accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get GOB account by masterDefendantId and accountCorrelationId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Response status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.response.to.have.header(\"Content-Type\", \"application/json\");",
+                  "});",
+                  "",
+                  "// Use pm.environment.get() to compare against the dynamic UUID!",
+                  "pm.test(\"Account Correlation ID matches the generated UUID from the POST request\", function () {",
+                  "    var expectedId = pm.environment.get(\"account_correlation_id\");",
+                  "    pm.expect(jsonData.accountCorrelationId).to.eql(expectedId);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body contains the correct masterDefendantId\", function () {",
+                  "    pm.expect(jsonData.masterDefendantId).to.eql(\"123e4567-e89b-12d3-a456-426614174000\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response body contains the correct accountNumber\", function () {",
+                  "    pm.expect(jsonData.accountNumber).to.eql(\"TEST-AUTO-001\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{verification_api_base_url}}/defendant-gob-accounts/123e4567-e89b-12d3-a456-426614174000/correlations/{{account_correlation_id}}",
+              "host": [
+                "{{verification_api_base_url}}"
+              ],
+              "path": [
+                "defendant-gob-accounts",
+                "123e4567-e89b-12d3-a456-426614174000",
+                "correlations",
+                "{{account_correlation_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get accounts by masterDefendantId and hearingId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{verification_api_base_url}}/defendant-gob-accounts?masterDefendantId=123e4567-e89b-12d3-a456-426614174000&hearingId=987e6543-e21b-12d3-a456-426614174000",
+              "host": [
+                "{{verification_api_base_url}}"
+              ],
+              "path": [
+                "defendant-gob-accounts"
+              ],
+              "query": [
+                {
+                  "key": "masterDefendantId",
+                  "value": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                {
+                  "key": "hearingId",
+                  "value": "987e6543-e21b-12d3-a456-426614174000"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Hearing Resulted Document",
+      "item": [
+        {
+          "name": "POST Generate Hearing Doc",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate a random UUID and save it to the environment",
+                  "// {{$guid}} is Postman's built-in tool for creating UUIDs.",
+                  "// Set the test_hearing_id environment variable to the generated UUID.",
+                  "pm.environment.set(\"test_hearing_id\",",
+                  "pm.variables.replaceIn('{{$guid}}'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"payload\": \"Automated test payload document\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{simulator_url}}/hearings/{{test_hearing_id}}",
+              "host": [
+                "{{simulator_url}}"
+              ],
+              "path": [
+                "hearings",
+                "{{test_hearing_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Verify Hearing Doc",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "// Assert the collection structure",
+                  "pm.test(\"Response has exactly one document\", function () {",
+                  "    pm.expect(jsonData.totalCount).to.eql(1);",
+                  "});",
+                  "",
+                  "// Assert the data integrity",
+                  "pm.test(\"Document payload matches the injected data\", function () {",
+                  "    const firstDoc = jsonData.data[0];",
+                  "    pm.expect(firstDoc.payload).to.eql(\"Automated test payload document\");",
+                  "});",
+                  "",
+                  "pm.test(\"Hearing day matches today's date\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const firstDoc = jsonData.data[0];",
+                  "    ",
+                  "    // Generate today's date in YYYY-MM-DD format",
+                  "    const today = new Date().toISOString().split('T')[0]; ",
+                  "    ",
+                  "    pm.expect(firstDoc.hearingDay).to.eql(today);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{verification_api_base_url}}/hearings/{{test_hearing_id}}",
+              "host": [
+                "{{verification_api_base_url}}"
+              ],
+              "path": [
+                "hearings",
+                "{{test_hearing_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "NCES Email Notification",
+      "item": []
+    },
+    {
+      "name": "Defendant Tracking Status",
+      "item": []
+    },
+    {
+      "name": "Informant Register",
+      "item": []
+    }
+  ]
+}
