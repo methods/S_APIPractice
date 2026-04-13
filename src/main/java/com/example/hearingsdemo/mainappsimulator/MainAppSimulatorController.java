@@ -1,4 +1,4 @@
-package com.example.hearingsdemo.mainappsimulator; // Change to your actual package
+package com.example.hearingsdemo.mainappsimulator;
 
 /**
  * SIMULATOR ONLY: This simulates the external "Main Application" and Message Queue.
