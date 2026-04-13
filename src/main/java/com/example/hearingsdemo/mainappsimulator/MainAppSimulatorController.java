@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/simulator/main-app")
-@Profile("!prod") // <-- Lock for Enterprise safety
+@Profile("simulator") // <-- Lock for Enterprise safety
 public class MainAppSimulatorController {
 
     private final JdbcTemplate jdbcTemplate;
