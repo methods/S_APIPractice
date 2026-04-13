@@ -31,7 +31,7 @@ public class MainAppSimulatorController {
     @PostMapping("/defendants/{masterId}/gob-accounts")
     public String simulateCreateGobAccount(
         @PathVariable UUID masterId,
-        @RequestBody Map<String, String> payload) throws InterruptedException {
+        @RequestBody Map<String, String> payload) {
 
         UUID hearingId = UUID.fromString(payload.get("hearingId"));
         UUID correlationId = UUID.randomUUID(); // The Main App generates this
@@ -49,7 +49,7 @@ public class MainAppSimulatorController {
             LocalDateTime.now(), caseRef, LocalDateTime.now(), LocalDateTime.now());
 
         // SIMULATE THE MESSAGE QUEUE DELAY (1 second)
-        Thread.sleep(1000);
+        simulateDelay(1000);
 
         // Return the generated correlation ID so Postman can use it
         return correlationId.toString();
@@ -62,7 +62,7 @@ public class MainAppSimulatorController {
     @PostMapping("/hearings/{hearingId}")
     public String simulateCreateHearing(
         @PathVariable UUID hearingId,
-        @RequestBody Map<String, String> requestBody ) throws InterruptedException {
+        @RequestBody Map<String, String> requestBody ) {
 
         LocalDate hearingDay = LocalDate.now();
         String payload = requestBody.get("payload");
@@ -76,7 +76,7 @@ public class MainAppSimulatorController {
             hearingId, hearingDay, LocalDate.now(), LocalDate.now(), payload
             );
 
-        Thread.sleep(1000);
+        simulateDelay(1000);
 
         return hearingId.toString();
     }
@@ -87,7 +87,7 @@ public class MainAppSimulatorController {
     @PostMapping("/offences/{offenceId}/tracking-status")
     public String simulateCreateOffenceTrackingStatus(
         @PathVariable UUID offenceId,
-        @RequestBody Map<String, String> requestBody ) throws InterruptedException {
+        @RequestBody Map<String, String> requestBody ) {
 
         UUID defendantId = UUID.fromString(requestBody.get("defendantId"));
         Boolean emStatus = Boolean.parseBoolean(requestBody.get("emStatus"));
@@ -102,7 +102,7 @@ public class MainAppSimulatorController {
         jdbcTemplate.update(sql,
             offenceId, defendantId, emStatus, emLastModifiedTime, woaStatus, woaLastModifiedTime);
 
-        Thread.sleep(1000);
+        simulateDelay(1000);
 
         return offenceId.toString();
     }
@@ -114,7 +114,7 @@ public class MainAppSimulatorController {
     public String simulateEmailNotification(
         @PathVariable UUID id,
         @RequestBody Map<String, String> requestBody
-    ) throws InterruptedException {
+    ) {
 
         // Extract IDs from Postman body
         UUID materialId = requestBody.get("materialId") != null ? UUID.fromString(requestBody.get("materialId")) : null;
@@ -137,7 +137,7 @@ public class MainAppSimulatorController {
             );
 
         // Mimic Async MQ Latency
-        Thread.sleep(2000);
+        simulateDelay(2000);
 
         return id.toString();
 
@@ -150,7 +150,7 @@ public class MainAppSimulatorController {
     public String simulateCreateInformant(
         @PathVariable UUID id,
         @RequestBody Map<String, String> requestBody
-    ) throws InterruptedException {
+    ) {
 
         String authCode = requestBody.get("prosecutionAuthorityCode");
         String authOuCode = requestBody.get("prosecutionAuthorityOuCode");
@@ -200,10 +200,20 @@ public class MainAppSimulatorController {
         );
 
         // Mimic Async MQ Latency
-        Thread.sleep(2000);
+        simulateDelay(2000);
 
         return id.toString();
 
+    }
+
+    // Helper
+    private void simulateDelay(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            // Restores the interrupted status (fixes the Copilot warning)
+            Thread.currentThread().interrupt();
+        }
     }
 
 }
