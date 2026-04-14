@@ -25,8 +25,15 @@ Because Docker Desktop requires a paid license for enterprise use, we use **Coli
    colima start
    ```
    (This spins up postgres:18.1 (matching production) on port 5432).
-2. **Run the Application:**
-   Run HearingsDemoApplication via your IDE. Spring Boot will automatically execute schema.sql and data.sql to build the tables and insert dummy data.
+
+2. **Spin up the Postgres Container**
+   ```bash
+   docker-compose up -d
+   ```
+   (This starts the **local-postgres** container in "detatched" mode. It will pull the postgres:18.1 image and bind it to port 5432).
+   
+3. **Run the Application:**
+   Run HearingsDemoApplication via your IDE. 
 
 ### Accessing the Local Database
 To inspect the local database, you must run psql inside the container:
