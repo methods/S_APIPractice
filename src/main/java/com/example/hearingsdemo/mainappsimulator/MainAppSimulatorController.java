@@ -37,7 +37,7 @@ public class MainAppSimulatorController {
         String caseRef = getRequiredString(payload, "caseReferences");
         String accountNumber = payload.get("accountNumber");
         UUID correlationId = UUID.randomUUID();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneOffset.UTC);
 
 
         String sql = """
@@ -73,7 +73,7 @@ public class MainAppSimulatorController {
         @PathVariable UUID hearingId,
         @RequestBody Map<String, String> requestBody ) {
 
-        LocalDate hearingDay = LocalDate.now();
+        LocalDate hearingDay = LocalDate.now(java.time.ZoneOffset.UTC);
         String payload = requestBody.get("payload");
 
         String sql = """
@@ -84,8 +84,8 @@ public class MainAppSimulatorController {
         jdbcTemplate.update(sql,
             hearingId,
             hearingDay,
-            LocalDate.now(),
-            LocalDate.now(),
+            LocalDate.now(java.time.ZoneOffset.UTC),
+            LocalDate.now(java.time.ZoneOffset.UTC),
             payload
         );
 
@@ -105,7 +105,7 @@ public class MainAppSimulatorController {
         UUID defendantId = getRequiredUUID(requestBody, "defendantId");
         Boolean emStatus = Boolean.parseBoolean(requestBody.get("emStatus"));
         Boolean woaStatus = Boolean.parseBoolean(requestBody.get("woaStatus"));
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneOffset.UTC);
 
 
         String sql = """
@@ -180,8 +180,8 @@ public class MainAppSimulatorController {
         String authOuCode = requestBody.get("prosecutionAuthorityOuCode");
         String status = requestBody.get("status");
 
-        LocalDate todayDate = LocalDate.now();
-        LocalDateTime nowTime = LocalDateTime.now();
+        LocalDate todayDate = LocalDate.now(java.time.ZoneOffset.UTC);
+        LocalDateTime nowTime = LocalDateTime.now(java.time.ZoneOffset.UTC);
 
         String sql = """
         INSERT INTO informant_register (
