@@ -1,4 +1,4 @@
-package com.example.hearingsdemo.hearingResultedDocument;
+package com.example.hearingsdemo.hearingresulteddocument;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
