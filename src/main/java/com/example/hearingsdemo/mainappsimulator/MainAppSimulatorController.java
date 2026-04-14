@@ -33,10 +33,12 @@ public class MainAppSimulatorController {
         @PathVariable UUID masterId,
         @RequestBody Map<String, String> payload) {
 
-        UUID hearingId = UUID.fromString(payload.get("hearingId"));
-        UUID correlationId = UUID.randomUUID(); // The Main App generates this
+        UUID hearingId = getRequiredUUID(payload, "hearingId");
+        String caseRef = getRequiredString(payload, "caseReferences");
         String accountNumber = payload.get("accountNumber");
-        String caseRef = payload.get("caseReferences");
+        UUID correlationId = UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+
 
         String sql = """
             INSERT INTO defendant_gob_accounts 
@@ -45,8 +47,15 @@ public class MainAppSimulatorController {
             """;
 
         jdbcTemplate.update(sql,
-            masterId, hearingId, correlationId, accountNumber,
-            LocalDateTime.now(), caseRef, LocalDateTime.now(), LocalDateTime.now());
+            masterId,
+            hearingId,
+            correlationId,
+            accountNumber,
+            now,           // account_request_time
+            caseRef,
+            now,           // created_time
+            now            // updated_time
+        );
 
         // SIMULATE THE MESSAGE QUEUE DELAY (1 second)
         simulateDelay(1000);
@@ -73,8 +82,12 @@ public class MainAppSimulatorController {
             """;
 
         jdbcTemplate.update(sql,
-            hearingId, hearingDay, LocalDate.now(), LocalDate.now(), payload
-            );
+            hearingId,
+            hearingDay,
+            LocalDate.now(),
+            LocalDate.now(),
+            payload
+        );
 
         simulateDelay(1000);
 
@@ -89,18 +102,24 @@ public class MainAppSimulatorController {
         @PathVariable UUID offenceId,
         @RequestBody Map<String, String> requestBody ) {
 
-        UUID defendantId = UUID.fromString(requestBody.get("defendantId"));
+        UUID defendantId = getRequiredUUID(requestBody, "defendantId");
         Boolean emStatus = Boolean.parseBoolean(requestBody.get("emStatus"));
-        LocalDateTime emLastModifiedTime = LocalDateTime.now();
         Boolean woaStatus = Boolean.parseBoolean(requestBody.get("woaStatus"));
-        LocalDateTime woaLastModifiedTime = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+
 
         String sql = """
             INSERT INTO defendant_tracking_status (
             offence_id, defendant_id, em_status, em_last_modified_time, woa_status, woa_last_modified_time) VALUES (?, ?, ?, ?, ?, ?)
             """;
         jdbcTemplate.update(sql,
-            offenceId, defendantId, emStatus, emLastModifiedTime, woaStatus, woaLastModifiedTime);
+            offenceId,
+            defendantId,
+            emStatus,
+            now,            // em_last_modified_time
+            woaStatus,
+            now             // woa_last_modified_time
+        );
 
         simulateDelay(1000);
 
@@ -117,11 +136,9 @@ public class MainAppSimulatorController {
     ) {
 
         // Extract IDs from Postman body
-        UUID materialId = requestBody.get("materialId") != null ? UUID.fromString(requestBody.get("materialId")) : null;
-        UUID notificationId = requestBody.get("notificationId") != null ? UUID.fromString(requestBody.get(
-            "notificationId")) : null;
-        UUID masterId = requestBody.get("masterDefendantId") != null ? UUID.fromString(requestBody.get(
-            "masterDefendantId")) : null;
+        UUID materialId = getOptionalUUID(requestBody, "materialId");
+        UUID notificationId = getOptionalUUID(requestBody, "notificationId");
+        UUID masterId = getOptionalUUID(requestBody, "masterDefendantId");
 
         String sendTo = requestBody.get("sendTo");
         String subject = requestBody.get("subject");
@@ -151,16 +168,17 @@ public class MainAppSimulatorController {
         @PathVariable UUID id,
         @RequestBody Map<String, String> requestBody
     ) {
+        // 1. Validate Required (Liquibase NOT NULL)
+        UUID authId = getRequiredUUID(requestBody, "prosecutionAuthorityId");
+        String payload = getRequiredString(requestBody, "payload");
+
+        // 2. Validate Optional (Liquibase NULL)
+        UUID fileId = getOptionalUUID(requestBody, "fileId");
+        UUID hearingId = getOptionalUUID(requestBody, "hearingId");
 
         String authCode = requestBody.get("prosecutionAuthorityCode");
         String authOuCode = requestBody.get("prosecutionAuthorityOuCode");
-        String payload = requestBody.get("payload");
         String status = requestBody.get("status");
-
-        // Extract IDs from Postman Body
-        UUID authId = UUID.fromString(requestBody.get("prosecutionAuthorityId"));
-        UUID fileId = requestBody.get("fileId") != null ? UUID.fromString(requestBody.get("fileId")) : null;
-        UUID hearingId = requestBody.get("hearingId") != null ? UUID.fromString(requestBody.get("hearingId")) : null;
 
         LocalDate todayDate = LocalDate.now();
         LocalDateTime nowTime = LocalDateTime.now();
@@ -206,12 +224,49 @@ public class MainAppSimulatorController {
 
     }
 
-    // Helper
+    // =============================================================================
+    // PRIVATE HELPERS
+    // =============================================================================
+
+    /** Ensures a string is present and not blank. Returns 400 if missing. */
+    private String getRequiredString(Map<String, String> payload, String key) {
+        String value = payload.get(key);
+        if (value == null || value.isBlank()) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST, "Missing required field: " + key);
+        }
+        return value;
+    }
+
+    /** Ensures a UUID is present and valid. Returns 400 if missing/invalid. */
+    private UUID getRequiredUUID(Map<String, String> payload, String key) {
+        String value = getRequiredString(payload, key);
+        try {
+            return UUID.fromString(value);
+        } catch (IllegalArgumentException e) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST, "Field '" + key + "' must be a valid UUID.");
+        }
+    }
+
+    /** Returns a UUID if present, or null if missing. Returns 400 if format is invalid. */
+    private UUID getOptionalUUID(Map<String, String> payload, String key) {
+        String value = payload.get(key);
+        if (value == null || value.isBlank()) return null;
+        try {
+            return UUID.fromString(value);
+        } catch (IllegalArgumentException e) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST, "Field '" + key + "' must be a valid UUID.");
+        }
+    }
+
+    // Properly handles Thread.sleep and satisfies the Java Compiler/Linter.
     private void simulateDelay(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
-            // Restores the interrupted status (fixes the Copilot warning)
+            // Restores the interrupted status
             Thread.currentThread().interrupt();
         }
     }
