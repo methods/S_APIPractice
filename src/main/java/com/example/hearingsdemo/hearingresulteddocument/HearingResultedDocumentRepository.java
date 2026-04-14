@@ -1,4 +1,4 @@
-package com.example.hearingsdemo.hearingResultedDocument;
+package com.example.hearingsdemo.hearingresulteddocument;
 
 
 import org.springframework.data.repository.Repository;

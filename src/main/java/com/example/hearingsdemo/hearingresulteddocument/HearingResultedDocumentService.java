@@ -1,4 +1,4 @@
-package com.example.hearingsdemo.hearingResultedDocument;
+package com.example.hearingsdemo.hearingresulteddocument;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

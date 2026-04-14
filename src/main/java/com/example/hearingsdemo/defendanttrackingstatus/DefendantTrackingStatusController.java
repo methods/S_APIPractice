@@ -1,4 +1,4 @@
-package com.example.hearingsdemo.defendantTrackingStatus;
+package com.example.hearingsdemo.defendanttrackingstatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

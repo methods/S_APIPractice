@@ -1,4 +1,4 @@
-package com.example.hearingsdemo.defendantTrackingStatus;
+package com.example.hearingsdemo.defendanttrackingstatus;
 
 import com.example.hearingsdemo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
