@@ -1,0 +1,595 @@
+{
+  "info": {
+    "_postman_id": "5ceb9a30-77fd-49c8-9fb2-dc95b23cfb4c",
+    "name": "MI Regression Suite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53815132"
+  },
+  "item": [
+    {
+      "name": "Defendant GOB Accounts",
+      "item": [
+        {
+          "name": "Create a new defendant_gob_account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Simulator returned a Correlation ID\", function () {",
+                  "",
+                  "    pm.response.to.have.status(200);",
+                  "",
+                  "    // Save the raw test response (the UUID) into a Postman environment variable.  ",
+                  "    pm.environment.set(\"account_correlation_id\", pm.response.text());",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hearingId\": \"987e6543-e21b-12d3-a456-426614174000\",\n  \"accountNumber\": \"TEST-AUTO-001\",\n  \"caseReferences\": \"REF-AUTO-999\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{simulator_url}}/defendants/123e4567-e89b-12d3-a456-426614174000/gob-accounts",
+              "host": [
+                "{{simulator_url}}"
+              ],
+              "path": [
+                "defendants",
+                "123e4567-e89b-12d3-a456-426614174000",
+                "gob-accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get GOB account by masterDefendantId and accountCorrelationId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Response status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.response.to.have.header(\"Content-Type\", \"application/json\");",
+                  "});",
+                  "",
+                  "// Use pm.environment.get() to compare against the dynamic UUID!",
+                  "pm.test(\"Account Correlation ID matches the generated UUID from the POST request\", function () {",
+                  "    var expectedId = pm.environment.get(\"account_correlation_id\");",
+                  "    pm.expect(jsonData.accountCorrelationId).to.eql(expectedId);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body contains the correct masterDefendantId\", function () {",
+                  "    pm.expect(jsonData.masterDefendantId).to.eql(\"123e4567-e89b-12d3-a456-426614174000\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response body contains the correct accountNumber\", function () {",
+                  "    pm.expect(jsonData.accountNumber).to.eql(\"TEST-AUTO-001\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{verification_api_base_url}}/defendant-gob-accounts/123e4567-e89b-12d3-a456-426614174000/correlations/{{account_correlation_id}}",
+              "host": [
+                "{{verification_api_base_url}}"
+              ],
+              "path": [
+                "defendant-gob-accounts",
+                "123e4567-e89b-12d3-a456-426614174000",
+                "correlations",
+                "{{account_correlation_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get accounts by masterDefendantId and hearingId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{verification_api_base_url}}/defendant-gob-accounts?masterDefendantId=123e4567-e89b-12d3-a456-426614174000&hearingId=987e6543-e21b-12d3-a456-426614174000",
+              "host": [
+                "{{verification_api_base_url}}"
+              ],
+              "path": [
+                "defendant-gob-accounts"
+              ],
+              "query": [
+                {
+                  "key": "masterDefendantId",
+                  "value": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                {
+                  "key": "hearingId",
+                  "value": "987e6543-e21b-12d3-a456-426614174000"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Hearing Resulted Document",
+      "item": [
+        {
+          "name": "POST Generate Hearing Doc",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate a random UUID and save it to the environment",
+                  "// {{$guid}} is Postman's built-in tool for creating UUIDs.",
+                  "// Set the test_hearing_id environment variable to the generated UUID.",
+                  "pm.environment.set(\"test_hearing_id\",",
+                  "pm.variables.replaceIn('{{$guid}}'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"payload\": \"Automated test payload document\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{simulator_url}}/hearings/{{test_hearing_id}}",
+              "host": [
+                "{{simulator_url}}"
+              ],
+              "path": [
+                "hearings",
+                "{{test_hearing_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Verify Hearing Doc",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "// Assert the collection structure",
+                  "pm.test(\"Response has exactly one document\", function () {",
+                  "    pm.expect(jsonData.totalCount).to.eql(1);",
+                  "});",
+                  "",
+                  "// Assert the data integrity",
+                  "pm.test(\"Document payload matches the injected data\", function () {",
+                  "    const firstDoc = jsonData.data[0];",
+                  "    pm.expect(firstDoc.payload).to.eql(\"Automated test payload document\");",
+                  "});",
+                  "",
+                  "pm.test(\"Hearing day matches today's date\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const firstDoc = jsonData.data[0];",
+                  "    ",
+                  "    // Generate today's date in YYYY-MM-DD format",
+                  "    const today = new Date().toISOString().split('T')[0]; ",
+                  "    ",
+                  "    pm.expect(firstDoc.hearingDay).to.eql(today);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{verification_api_base_url}}/hearings/{{test_hearing_id}}",
+              "host": [
+                "{{verification_api_base_url}}"
+              ],
+              "path": [
+                "hearings",
+                "{{test_hearing_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "NCES Email Notification",
+      "item": [
+        {
+          "name": "Generate Email Notification",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate a unique ID for the record itself",
+                  "pm.environment.set(\"test_id\", pm.variables.replaceIn('{{$guid}}'));",
+                  "",
+                  "// Generate a unique ID for the materialId",
+                  "pm.environment.set(\"test_material_id\", pm.variables.replaceIn('{{$guid}}'));",
+                  "",
+                  "// Generate a unique ID for the notificationId",
+                  "pm.environment.set(\"test_notification_id\", pm.variables.replaceIn('{{$guid}}'));",
+                  "",
+                  "// Generate a unique ID for the masterId",
+                  "pm.environment.set(\"test_master_id\", pm.variables.replaceIn('{{$guid}}'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"materialId\": \"{{test_material_id}}\",\n    \"notificationId\": \"{{test_notification_id}}\",\n    \"masterDefendantId\": \"{{test_master_id}}\",\n    \"sendTo\": \"TEST_SEND_TO\",\n    \"subject\": \"TEST SUBJECT LINE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{simulator_url}}/nces-notifications/{{test_id}}",
+              "host": [
+                "{{simulator_url}}"
+              ],
+              "path": [
+                "nces-notifications",
+                "{{test_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Primary and Relational IDs match the generated UUIDs\", function () {",
+                  "    const expectedId = pm.environment.get(\"test_id\");",
+                  "    const expectedMasterId = pm.environment.get(\"test_master_id\");",
+                  "    const expectedMaterialId = pm.environment.get(\"test_material_id\");",
+                  "    const expectedNotificationId = pm.environment.get(\"test_notification_id\");",
+                  "",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);",
+                  "    pm.expect(jsonData.masterDefendantId).to.eql(expectedMasterId);",
+                  "    pm.expect(jsonData.materialId).to.eql(expectedMaterialId);",
+                  "    pm.expect(jsonData.notificationId).to.eql(expectedNotificationId);",
+                  "});",
+                  "",
+                  "pm.test(\"Business strings are correct\", function () {",
+                  "    pm.expect(jsonData.sendTo).to.eql(\"TEST_SEND_TO\");",
+                  "    pm.expect(jsonData.subject).to.eql(\"TEST SUBJECT LINE\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{verification_api_base_url}}/nces-notifications/{{test_id}}",
+              "host": [
+                "{{verification_api_base_url}}"
+              ],
+              "path": [
+                "nces-notifications",
+                "{{test_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Defendant Tracking Status",
+      "item": [
+        {
+          "name": "Generate OffenceID Tracking Status",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate the two random UUID pre-conditions",
+                  "pm.environment.set(\"test_offence_id\",",
+                  "pm.variables.replaceIn('{{$guid}}'));",
+                  "",
+                  "pm.environment.set(\"test_defendant_id\",",
+                  "pm.variables.replaceIn('{{$guid}}'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"defendantId\": \"{{test_defendant_id}}\",\n    \"emStatus\": \"true\",\n    \"woaStatus\": \"false\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{simulator_url}}/offences/{{test_offence_id}}/tracking-status",
+              "host": [
+                "{{simulator_url}}"
+              ],
+              "path": [
+                "offences",
+                "{{test_offence_id}}",
+                "tracking-status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Tracking Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Response status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Use pm.environment.get() to compare against the dynamic UUID!",
+                  "pm.test(\"IDs match the generated UUID from the POST request\", function () {",
+                  "    var expectedOffenceId = pm.environment.get(\"test_offence_id\");",
+                  "    var expectedDefendantId = pm.environment.get(\"test_defendant_id\");",
+                  "",
+                  "    pm.expect(jsonData.offenceId).to.eql(expectedOffenceId);",
+                  "    pm.expect(jsonData.defendantId).to.eql(expectedDefendantId);",
+                  "});",
+                  "",
+                  "pm.test(\"Status flags match the injected Boolean values\", function () {",
+                  "    // The 'Enterprise' way to check true/false",
+                  "    pm.expect(jsonData.emStatus).to.be.true;",
+                  "    pm.expect(jsonData.woaStatus).to.be.false;",
+                  "});",
+                  "",
+                  "pm.test(\"Timestamps are present and match today's date\", function () {",
+                  "    // Generate today's date in YYYY-MM-DD format",
+                  "    const today = new Date().toISOString().split('T')[0]; ",
+                  "    ",
+                  "    // We use .to.include() because the API returns a full timestamp (e.g. 2025-05-22T14:30:00)",
+                  "    pm.expect(jsonData.emLastModifiedTime).to.include(today);",
+                  "    pm.expect(jsonData.woaLastModifiedTime).to.include(today);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{verification_api_base_url}}/offences/{{test_offence_id}}/tracking-status",
+              "host": [
+                "{{verification_api_base_url}}"
+              ],
+              "path": [
+                "offences",
+                "{{test_offence_id}}",
+                "tracking-status"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Informant Register",
+      "item": [
+        {
+          "name": "Generate Informant Report",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate a unique ID for the record itself",
+                  "pm.environment.set(\"test_informant_id\", pm.variables.replaceIn('{{$guid}}'));",
+                  "",
+                  "// Generate a unique ID for the authority",
+                  "pm.environment.set(\"test_auth_id\", pm.variables.replaceIn('{{$guid}}'));",
+                  "",
+                  "// Generate a unique ID for the hearing",
+                  "pm.environment.set(\"test_hearing_id\", pm.variables.replaceIn('{{$guid}}'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"prosecutionAuthorityId\": \"{{test_auth_id}}\",\n    \"prosecutionAuthorityCode\": \"PA-TEST-001\",\n    \"prosecutionAuthorityOuCode\": \"OU-TEST-99\",\n    \"fileId\": \"{{$guid}}\", \n    \"hearingId\": \"{{test_hearing_id}}\",\n    \"payload\": \"{\\\"test\\\": \\\"informant data\\\"}\",\n    \"status\": \"PROCESSED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{simulator_url}}/informant-reporting/{{test_informant_id}}",
+              "host": [
+                "{{simulator_url}}"
+              ],
+              "path": [
+                "informant-reporting",
+                "{{test_informant_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Informant Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Primary and Relational IDs match the generated UUIDs\", function () {",
+                  "    const expectedInformantId = pm.environment.get(\"test_informant_id\");",
+                  "    const expectedAuthId = pm.environment.get(\"test_auth_id\");",
+                  "    const expectedHearingId = pm.environment.get(\"test_hearing_id\");",
+                  "",
+                  "    pm.expect(jsonData.id).to.eql(expectedInformantId);",
+                  "    pm.expect(jsonData.prosecutionAuthorityId).to.eql(expectedAuthId);",
+                  "    pm.expect(jsonData.hearingId).to.eql(expectedHearingId);",
+                  "});",
+                  "",
+                  "pm.test(\"Business strings (Codes, Status, Payload) are correct\", function () {",
+                  "    pm.expect(jsonData.prosecutionAuthorityCode).to.eql(\"PA-TEST-001\");",
+                  "    pm.expect(jsonData.prosecutionAuthorityOuCode).to.eql(\"OU-TEST-99\");",
+                  "    pm.expect(jsonData.status).to.eql(\"PROCESSED\");",
+                  "    ",
+                  "    // Validate the raw payload string",
+                  "    pm.expect(jsonData.payload).to.eql(\"{\\\"test\\\": \\\"informant data\\\"}\");",
+                  "});",
+                  "",
+                  "pm.test(\"Audit dates and timestamps match today's date\", function () {",
+                  "    const today = new Date().toISOString().split('T')[0]; ",
+                  "    ",
+                  "    // Checking both LocalDate fields and LocalDateTime fields",
+                  "    pm.expect(jsonData.registerDate).to.eql(today);",
+                  "    pm.expect(jsonData.generatedDate).to.eql(today);",
+                  "    ",
+                  "    pm.expect(jsonData.processedOn).to.include(today);",
+                  "    pm.expect(jsonData.registerTime).to.include(today);",
+                  "    pm.expect(jsonData.generatedTime).to.include(today);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{verification_api_base_url}}/informant-reporting/{{test_informant_id}}",
+              "host": [
+                "{{verification_api_base_url}}"
+              ],
+              "path": [
+                "informant-reporting",
+                "{{test_informant_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
