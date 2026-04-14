@@ -1,4 +1,4 @@
-package com.example.hearingsdemo.defendanttrackingStatus;
+package com.example.hearingsdemo.defendanttrackingstatus;
 
 import org.springframework.data.repository.Repository;
 

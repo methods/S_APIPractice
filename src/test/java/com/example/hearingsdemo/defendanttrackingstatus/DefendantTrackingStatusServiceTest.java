@@ -1,4 +1,4 @@
-package com.example.hearingsdemo.defendanttrackingStatus;
+package com.example.hearingsdemo.defendanttrackingstatus;
 
 import com.example.hearingsdemo.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.DisplayName;

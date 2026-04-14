@@ -1,4 +1,4 @@
-package com.example.hearingsdemo.defendanttrackingStatus;
+package com.example.hearingsdemo.defendanttrackingstatus;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
