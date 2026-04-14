@@ -424,7 +424,7 @@
                   "});",
                   "",
                   "// Use pm.environment.get() to compare against the dynamic UUID!",
-                  "pm.test(\"IDs matche the generated UUID from the POST request\", function () {",
+                  "pm.test(\"IDs match the generated UUID from the POST request\", function () {",
                   "    var expectedOffenceId = pm.environment.get(\"test_offence_id\");",
                   "    var expectedDefendantId = pm.environment.get(\"test_defendant_id\");",
                   "",
